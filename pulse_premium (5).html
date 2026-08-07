@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Achievement Strengths Pulse</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", sans-serif;
+      background: #0a0a0a;
+      color: white;
+      min-height: 100vh;
+    }
+    
+    .container {
+      display: flex;
+      height: 100vh;
+    }
+    
+    .sidebar {
+      width: 450px;
+      background: #0f0f0f;
+      border-right: 1px solid #2a2a2a;
+      padding: 60px 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    
+    .behaviour-number {
+      font-size: 72px;
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: 40px;
+    }
+    
+    .behaviour-number-label {
+      font-size: 24px;
+      font-weight: 300;
+      line-height: 1;
+      margin-bottom: 8px;
+      opacity: 0.6;
+    }
+    
+    .progress-section {
+      padding-top: 40px;
+      border-top: 1px solid #2a2a2a;
+    }
+    
+    .progress-label {
+      font-size: 14px;
+      opacity: 0.7;
+      margin-bottom: 12px;
+    }
+    
+    .progress-bar {
+      width: 100%;
+      height: 6px;
+      background: #1a1a1a;
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: #1baf7a;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+    
+    .progress-text {
+      font-size: 13px;
+      opacity: 0.6;
+    }
+    
+    .main {
+      flex: 1;
+      padding: 80px 80px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      background: linear-gradient(135deg, #0a0a0a 0%, #0f0f0f 100%);
+    }
+    
+    .purpose-label {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: #e8d44f;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+    }
+    
+    .question {
+      font-size: 56px;
+      font-weight: 600;
+      line-height: 1.2;
+      margin-bottom: 60px;
+      letter-spacing: -0.5px;
+    }
+    
+    .response-options {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-bottom: 60px;
+    }
+    
+    .response-card {
+      padding: 32px 24px;
+      border: 1px solid #2a2a2a;
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: center;
+      position: relative;
+    }
+    
+    .response-card:hover {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: #3a3a3a;
+    }
+    
+    .response-card.selected {
+      background: rgba(27, 175, 122, 0.15);
+      border-color: #1baf7a;
+      box-shadow: 0 0 20px rgba(27, 175, 122, 0.2);
+    }
+    
+    .response-number {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      opacity: 0.5;
+    }
+    
+    .response-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    
+    .response-description {
+      font-size: 13px;
+      opacity: 0.6;
+      line-height: 1.5;
+    }
+    
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 24px;
+    }
+    
+    .btn-back {
+      background: transparent;
+      border: none;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      padding: 0;
+      opacity: 0.6;
+      transition: opacity 0.2s;
+    }
+    
+    .btn-back:hover {
+      opacity: 1;
+    }
+    
+    .btn-next {
+      background: #1baf7a;
+      color: #000;
+      border: none;
+      padding: 14px 40px;
+      font-size: 16px;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .btn-next:hover {
+      background: #17a06e;
+      transform: translateX(4px);
+    }
+    
+    .btn-next:disabled {
+      background: #1a1a1a;
+      color: #666;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .results-screen {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+    }
+    
+    .results-screen.active {
+      display: flex;
+    }
+    
+    .results-title {
+      font-size: 48px;
+      font-weight: 600;
+      margin-bottom: 40px;
+    }
+    
+    .score-display {
+      font-size: 72px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: #1baf7a;
+    }
+    
+    .score-interpretation {
+      font-size: 18px;
+      opacity: 0.8;
+      margin-bottom: 60px;
+      max-width: 600px;
+    }
+    
+    .results-list {
+      max-height: 600px;
+      overflow-y: auto;
+      margin-bottom: 40px;
+    }
+    
+    .result-item {
+      padding: 16px 0;
+      border-bottom: 1px solid #2a2a2a;
+      font-size: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .result-item-title {
+      flex: 1;
+    }
+    
+    .result-item-score {
+      background: rgba(27, 175, 122, 0.15);
+      padding: 4px 12px;
+      border-radius: 4px;
+      font-weight: 600;
+      color: #1baf7a;
+    }
+    
+    .btn-primary {
+      background: #1baf7a;
+      color: #000;
+      border: none;
+      padding: 14px 40px;
+      font-size: 16px;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .btn-primary:hover {
+      background: #17a06e;
+    }
+    
+    .btn-secondary {
+      background: transparent;
+      color: white;
+      border: 1px solid #2a2a2a;
+      padding: 12px 32px;
+      font-size: 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-right: 12px;
+    }
+    
+    .btn-secondary:hover {
+      border-color: #3a3a3a;
+      background: rgba(255, 255, 255, 0.05);
+    }
+    
+    @media (max-width: 1200px) {
+      .container { flex-direction: column; }
+      .sidebar { width: 100%; border-right: none; border-bottom: 1px solid #2a2a2a; padding: 40px; }
+      .main { padding: 40px; }
+      .response-options { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="sidebar">
+    <div>
+      <div class="behaviour-number-label">Behaviour</div>
+      <div class="behaviour-number" id="currentBehaviorNum">01</div>
+    </div>
+    
+    <div class="progress-section">
+      <div class="progress-label">Progress</div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <div class="progress-text"><span id="answeredCount">0</span> of 10 answered</div>
+    </div>
+  </div>
+  
+  <div class="main">
+    <div id="welcomeScreen">
+      <div class="purpose-label">Achievement Strengths Pulse</div>
+      <div class="question" style="font-size: 36px; margin-bottom: 40px;">Let's get started</div>
+      
+      <div style="max-width: 400px;">
+        <div style="margin-bottom: 24px;">
+          <label style="display: block; font-size: 13px; opacity: 0.7; margin-bottom: 8px;">Full Name</label>
+          <input type="text" id="userName" placeholder="Your name" style="width: 100%; padding: 12px 16px; background: rgba(255,255,255,0.05); border: 1px solid #2a2a2a; border-radius: 4px; color: white; font-size: 14px;">
+        </div>
+        
+        <div style="margin-bottom: 40px;">
+          <label style="display: block; font-size: 13px; opacity: 0.7; margin-bottom: 8px;">Email</label>
+          <input type="email" id="userEmail" placeholder="your.email@company.com" style="width: 100%; padding: 12px 16px; background: rgba(255,255,255,0.05); border: 1px solid #2a2a2a; border-radius: 4px; color: white; font-size: 14px;">
+        </div>
+        
+        <button class="btn-next" onclick="startSurvey()" style="width: 100%; padding: 14px;">Begin Survey →</button>
+      </div>
+    </div>
+    
+    <div id="surveyScreen" style="display: none;">
+      <div class="purpose-label">Purpose</div>
+      <div class="question" id="behaviorQuestion">Question here</div>
+      
+      <div class="response-options" id="responseOptions"></div>
+      
+      <div class="controls">
+        <button class="btn-back" id="backBtn" onclick="previousBehavior()">← Back</button>
+        <button class="btn-next" id="nextBtn" onclick="nextBehavior()" disabled>Next behaviour →</button>
+      </div>
+    </div>
+    
+    <div id="resultsScreen" style="display: none;">
+      <div class="question" style="font-size: 36px; margin-bottom: 40px;">Thank you!</div>
+      <div style="font-size: 18px; opacity: 0.8; max-width: 500px; line-height: 1.6;">
+        Your results have been sent to <strong>academy@solutionsplus.au</strong>
+        <br><br>
+        We'll review your Humanistic-Encouraging strengths and provide personalized insights to help you continue building these critical leadership behaviors.
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const behaviors = [
+  {
+    title: "Takes time to understand what matters to others",
+    description: "You ask people about their goals, priorities, aspirations. You remember and reference what they tell you."
+  },
+  {
+    title: "Gives others credit publicly for their contributions",
+    description: "You name people's specific work in meetings, emails, town halls. You celebrate what they did and the impact."
+  },
+  {
+    title: "Asks questions to help others think through problems",
+    description: "When someone brings an issue, you ask 'What do you think?' instead of telling them. You help them figure it out."
+  },
+  {
+    title: "Creates opportunities for others to stretch and grow",
+    description: "You give people assignments just beyond their current skill. You support them. They develop visibly."
+  },
+  {
+    title: "Listens without interrupting when someone is speaking",
+    description: "You don't interrupt. You let people finish. You pause before responding. People feel heard."
+  },
+  {
+    title: "Shares feedback in a way that is kind but honest",
+    description: "You give honest feedback wrapped in care. 'I believe in you. Here's what I see.' People feel supported."
+  },
+  {
+    title: "Acknowledges people's unique strengths and talents",
+    description: "You notice specific strengths. You tell people. 'I see you're really good at X.' You help them use those strengths."
+  },
+  {
+    title: "Mentors or coaches someone in their work or development",
+    description: "You have regular mentoring conversations (monthly). You actively develop someone. They call you 'my mentor.'"
+  },
+  {
+    title: "Makes others feel their ideas and opinions matter",
+    description: "You solicit input in meetings. You take ideas seriously. You tell people what you'll do with their input."
+  },
+  {
+    title: "Checks in on how others are doing, not just the work",
+    description: "You ask 'How are you?' and actually listen. You follow up on personal things people shared. People feel like humans."
+  }
+];
+
+const responseOptions = [
+  { num: 0, title: "Not at all", desc: "I do not observe this" },
+  { num: 1, title: "Sometimes", desc: "I observe this in some situations" },
+  { num: 2, title: "Consistently", desc: "I regularly observe this" }
+];
+
+let currentBehavior = 0;
+let ratings = new Array(10).fill(-1);
+let userName = '';
+let userEmail = '';
+
+function startSurvey() {
+  userName = document.getElementById('userName').value.trim();
+  userEmail = document.getElementById('userEmail').value.trim();
+  
+  if (!userName || !userEmail) {
+    alert('Please enter your name and email');
+    return;
+  }
+  
+  document.getElementById('welcomeScreen').style.display = 'none';
+  document.getElementById('surveyScreen').style.display = 'block';
+  renderBehavior();
+}
+
+function renderBehavior() {
+  const behavior = behaviors[currentBehavior];
+  document.getElementById('behaviorQuestion').textContent = behavior.title;
+  document.getElementById('currentBehaviorNum').textContent = String(currentBehavior + 1).padStart(2, '0');
+  
+  const responseHtml = responseOptions.map((opt, idx) => `
+    <div class="response-card ${ratings[currentBehavior] === idx ? 'selected' : ''}" onclick="selectResponse(${idx})">
+      <div class="response-number">${opt.num}</div>
+      <div class="response-title">${opt.title}</div>
+      <div class="response-description">${opt.desc}</div>
+    </div>
+  `).join('');
+  
+  document.getElementById('responseOptions').innerHTML = responseHtml;
+  
+  document.getElementById('backBtn').style.opacity = currentBehavior === 0 ? '0.3' : '0.6';
+  document.getElementById('backBtn').style.pointerEvents = currentBehavior === 0 ? 'none' : 'auto';
+  
+  document.getElementById('nextBtn').disabled = ratings[currentBehavior] === -1;
+  document.getElementById('nextBtn').textContent = currentBehavior === 9 ? 'Submit →' : 'Next behaviour →';
+  
+  updateProgress();
+}
+
+function selectResponse(idx) {
+  ratings[currentBehavior] = idx;
+  renderBehavior();
+}
+
+function nextBehavior() {
+  if (ratings[currentBehavior] === -1) return;
+  if (currentBehavior < 9) {
+    currentBehavior++;
+    renderBehavior();
+  } else {
+    showResults();
+  }
+}
+
+function previousBehavior() {
+  if (currentBehavior > 0) {
+    currentBehavior--;
+    renderBehavior();
+  }
+}
+
+function updateProgress() {
+  const answered = ratings.filter(r => r !== -1).length;
+  const percent = (answered / 10) * 100;
+  document.getElementById('progressFill').style.width = percent + '%';
+  document.getElementById('answeredCount').textContent = answered;
+}
+
+function showResults() {
+  const scores = ratings.map(r => r + 1);
+  const average = (scores.reduce((a, b) => a + b, 0) / 10).toFixed(2);
+  
+  let interpretation = '';
+  if (average >= 2.7) interpretation = '✓ Strong - You consistently demonstrate Humanistic-Encouraging behaviors';
+  else if (average >= 2.3) interpretation = '◐ Solid - You mostly demonstrate these behaviors';
+  else if (average >= 1.7) interpretation = '○ Emerging - You sometimes show these behaviors';
+  else interpretation = '◐ Starting - Focus on building these behaviors';
+  
+  const scoresText = behaviors.map((b, idx) => `${idx + 1}. ${b.title}: ${scores[idx]}`).join('\n');
+  
+  const emailBody = `
+Name: ${userName}
+Email: ${userEmail}
+Timestamp: ${new Date().toLocaleString()}
+
+Overall Score: ${average}
+Interpretation: ${interpretation}
+
+Individual Scores:
+${scoresText}
+  `.trim();
+  
+  // Submit via FormSubmit AJAX endpoint (no page navigation)
+  fetch('https://formsubmit.co/ajax/academy@solutionsplus.au', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    },
+    body: JSON.stringify({
+      name: userName,
+      email: userEmail,
+      _subject: `HE Survey Results - ${userName}`,
+      _replyto: userEmail,
+      _captcha: 'false',
+      message: emailBody
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success === "true" || data.success === true) {
+      document.getElementById('surveyScreen').style.display = 'none';
+      document.getElementById('resultsScreen').style.display = 'block';
+    } else {
+      alert('Submission issue: ' + (data.message || 'Please try again.'));
+    }
+  })
+  .catch(error => {
+    alert('Could not send results. Check your internet connection and try again.');
+  });
+}
+</script>
+
+</body>
+</html>
