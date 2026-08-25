@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Solutions Academy — Leadership Results</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root{--lime:#e6f301;--ink:#111;--muted:#666;--line:#d9d9d9;--paper:#f2f2ef;--danger:#b3261e}
+    *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:Roboto,Arial,sans-serif}button,input,select{font:inherit}.hidden{display:none!important}
+    .login{min-height:100vh;display:grid;place-items:center;padding:24px;background:#111}.login-card{width:min(470px,100%);background:#fff;padding:42px;border-top:10px solid var(--lime)}
+    .eyebrow{font-size:12px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:#606600}.login h1{font-size:34px;line-height:1.08;margin:12px 0 14px}.login p{line-height:1.55;color:#555}
+    label{display:block;font-size:12px;font-weight:800;margin:22px 0 7px}input,select{width:100%;padding:12px;border:1px solid #aaa;background:#fff;border-radius:3px}.btn{border:0;background:var(--lime);color:#111;font-weight:900;padding:13px 18px;cursor:pointer}.login .btn{width:100%;margin-top:12px}.message{min-height:22px;margin-top:14px;font-size:14px}
+    .app{min-height:100vh}.topbar{background:#111;color:#fff;padding:20px 28px;display:flex;align-items:center;justify-content:space-between;gap:18px}.brand{font-size:25px}.brand strong{color:var(--lime)}.top-actions{display:flex;gap:8px}.top-actions button{border:1px solid #666;background:#111;color:#fff;padding:9px 12px;cursor:pointer}
+    .workspace{max-width:1400px;margin:auto;padding:26px}.warning{background:#111;color:#fff;border-left:9px solid var(--lime);padding:14px 18px;margin-bottom:18px;font-size:14px}.warning strong{color:var(--lime)}
+    .filters{background:#fff;padding:18px;display:grid;grid-template-columns:1fr 1fr auto;gap:16px;align-items:end;border:1px solid var(--line)}.filters label{margin:0 0 7px}.mode-tabs{display:flex;gap:0}.mode-tabs button{padding:12px 15px;border:1px solid #aaa;background:#fff;font-weight:800;cursor:pointer}.mode-tabs button.active{background:var(--lime);border-color:var(--lime)}
+    .panel{margin-top:18px;background:#fff;border:1px solid var(--line)}.report{min-height:660px;display:grid;grid-template-columns:32% 68%}.side{background:#111;color:#fff;padding:42px 38px;position:relative;overflow:hidden}.side:before{content:"";position:absolute;width:190px;height:190px;background:var(--lime);border-radius:50%;right:-95px;top:-95px}.side .eyebrow{color:var(--lime);margin-top:82px}.participant{font-size:48px;line-height:1;font-weight:900;margin:14px 0 10px;word-break:break-word}.cohort{font-size:18px;color:#ccc}.meta{margin-top:45px;padding-top:22px;border-top:1px solid #444}.count{font-size:48px;font-weight:900;color:var(--lime)}.meta-label{font-size:13px;line-height:1.45;color:#ccc}.academy-note{position:absolute;bottom:35px;left:38px;right:38px;color:#aaa;font-size:12px;line-height:1.45}
+    .main{padding:42px 48px}.main h2{font-size:34px;line-height:1.08;margin:8px 0 10px}.intro{color:#666;line-height:1.5;margin:0 0 25px}.primary{display:flex;justify-content:space-between;align-items:center;background:var(--lime);padding:18px 22px;margin-bottom:25px}.primary-label{font-size:11px;font-weight:900;letter-spacing:.12em;text-transform:uppercase}.primary-name{font-size:24px;font-weight:900;margin-top:4px}.primary-score{font-size:42px;font-weight:900}.styles{display:grid;gap:16px}.style-head{display:grid;grid-template-columns:1fr auto;align-items:end;margin-bottom:7px}.style-name{font-size:17px;font-weight:800}.style-band{font-size:12px;color:#666;margin-top:3px}.style-score{font-size:23px;font-weight:900}.track{height:16px;background:#ececec;overflow:hidden}.fill{height:100%;background:#111}.scale{display:flex;justify-content:space-between;color:#888;font-size:10px;margin-top:4px}.footer{margin-top:25px;padding-top:16px;border-top:1px solid var(--line);font-size:11px;color:#777;line-height:1.5}
+    .individual-layout{display:grid;grid-template-columns:360px 1fr;min-height:660px}.respondents{border-right:1px solid var(--line);padding:24px}.respondents h2{font-size:22px;margin:0 0 6px}.respondents p{font-size:13px;color:#666;line-height:1.45;margin:0 0 18px}.respondent-list{display:grid;gap:8px}.respondent-btn{text-align:left;border:1px solid var(--line);background:#fff;padding:13px;cursor:pointer}.respondent-btn.active{border-color:#111;background:var(--lime)}.respondent-name{font-weight:900}.respondent-meta{font-size:12px;color:#666;margin-top:4px}.individual-report{padding:30px}.empty{padding:55px;text-align:center;color:#666}.error{color:var(--danger)}
+    @media(max-width:850px){.filters{grid-template-columns:1fr}.report,.individual-layout{display:block}.respondents{border-right:0;border-bottom:1px solid var(--line)}.side{min-height:390px}.academy-note{position:static;margin-top:50px}.main{padding:32px 24px}.workspace{padding:12px}.topbar{align-items:flex-start}.primary-score{font-size:34px}}
+    @media print{body{background:#fff}.topbar,.filters,.warning,.respondents{display:none!important}.workspace{padding:0;max-width:none}.panel{margin:0;border:0}.report{min-height:100vh}.individual-layout{display:block}.fill,.side,.primary{print-color-adjust:exact;-webkit-print-color-adjust:exact}}
+  </style>
+</head>
+<body>
+  <section id="login" class="login">
+    <div class="login-card">
+      <div class="eyebrow">Solutions Academy — restricted</div>
+      <h1>Leadership results centre</h1>
+      <p>Sign in with an approved Academy email to view cohort-based consolidated and individual results.</p>
+      <label for="email">Approved email address</label>
+      <input id="email" type="email" autocomplete="email" placeholder="name@solutionsplus.au">
+      <button id="sendLink" class="btn">Send secure sign-in link</button>
+      <div id="loginMessage" class="message"></div>
+    </div>
+  </section>
+
+  <section id="app" class="app hidden">
+    <header class="topbar">
+      <div class="brand">Solutions<strong>+</strong> <span style="font-size:14px;letter-spacing:1px">ACADEMY RESULTS</span></div>
+      <div class="top-actions"><button id="print">Print / Save PDF</button><button id="signOut">Sign out</button></div>
+    </header>
+    <main class="workspace">
+      <div class="warning"><strong>ACADEMY ONLY:</strong> Individual respondent scores are confidential and must not be shared with the participant. Share only the consolidated profile.</div>
+      <section class="filters">
+        <div><label for="cohortSelect">Cohort</label><select id="cohortSelect"></select></div>
+        <div><label for="participantSelect">Participant</label><select id="participantSelect"></select></div>
+        <div class="mode-tabs"><button id="consolidatedTab" class="active">Consolidated</button><button id="individualTab">Individual responses</button></div>
+      </section>
+      <div id="statusMessage" class="message"></div>
+
+      <section id="consolidatedPanel" class="panel">
+        <article class="report">
+          <aside class="side">
+            <div class="brand">Solutions<strong>+</strong><br><span style="font-size:16px;letter-spacing:1px;color:var(--lime)">ACADEMY</span></div>
+            <div class="eyebrow">Consolidated leadership profile</div>
+            <div id="conParticipant" class="participant">—</div><div id="conCohort" class="cohort">—</div>
+            <div class="meta"><div id="conCompleted" class="count">0</div><div class="meta-label">completed responses included<br>in this consolidated profile</div></div>
+            <div class="academy-note">This consolidated profile is the version intended for the participant.</div>
+          </aside>
+          <div class="main">
+            <div class="eyebrow">Leadership behavioural and thinking profile</div><h2>How leadership is being experienced</h2>
+            <p class="intro">Average of all completed, non-test responses for the selected participant and cohort.</p>
+            <div class="primary"><div><div class="primary-label">Most strongly experienced style</div><div id="conPrimaryName" class="primary-name">—</div></div><div id="conPrimaryScore" class="primary-score">—</div></div>
+            <div id="conStyles" class="styles"></div>
+            <div class="footer">Ten observable behaviours per style, rated 0–2. Results are averaged across respondents and capped at 99%.</div>
+          </div>
+        </article>
+      </section>
+
+      <section id="individualPanel" class="panel hidden">
+        <div class="individual-layout">
+          <aside class="respondents"><h2>Individual responses</h2><p>Select a respondent to inspect their scores. These results are for Academy quality assurance only.</p><div id="respondentList" class="respondent-list"></div></aside>
+          <article id="individualReport" class="individual-report"><div class="empty">Select an individual response.</div></article>
+        </div>
+      </section>
+    </main>
+  </section>
+
+  <script>
+    const SUPABASE_URL='https://dsszlqxxbkdcrvhcqkzt.supabase.co';
+    const SUPABASE_KEY='sb_publishable_FJXAmlJ7Q3OYKRLYwoBliw_8OS4Dmv2';
+    const client=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+    const $=id=>document.getElementById(id);
+    let consolidatedRows=[],individualRows=[];
+
+    function band(score){if(score<25)return'Emerging';if(score<50)return'Developing';if(score<75)return'Established';return'Strongly experienced'}
+    function stylesFrom(row){return[['Encouraging',Number(row.encouraging_percent)],['Relational',Number(row.relational_percent)],['Achievement',Number(row.achievement_percent)],['Reflective',Number(row.reflective_percent)]]}
+    function styleMarkup(styles){return styles.map(([name,score])=>`<div class="style"><div class="style-head"><div><div class="style-name">${name} Leadership</div><div class="style-band">${band(score)}</div></div><div class="style-score">${score}%</div></div><div class="track"><div class="fill" style="width:${Math.max(0,Math.min(99,score))}%"></div></div><div class="scale"><span>0</span><span>25</span><span>50</span><span>75</span><span>99</span></div></div>`).join('')}
+    function selectedRows(){const c=$('cohortSelect').value,p=$('participantSelect').value;return{con:consolidatedRows.find(r=>r.cohort===c&&r.participant_name===p),ind:individualRows.filter(r=>r.cohort===c&&r.participant_name===p)}}
+    function renderConsolidated(row){if(!row){$('conStyles').innerHTML='<div class="empty">No completed responses for this participant.</div>';return}const styles=stylesFrom(row),primary=[...styles].sort((a,b)=>b[1]-a[1])[0];$('conParticipant').textContent=row.participant_name;$('conCohort').textContent=row.cohort;$('conCompleted').textContent=row.completed_responses;$('conPrimaryName').textContent=primary[0]+' Leadership';$('conPrimaryScore').textContent=primary[1]+'%';$('conStyles').innerHTML=styleMarkup(styles)}
+    function renderIndividual(row){if(!row){$('individualReport').innerHTML='<div class="empty">No individual response selected.</div>';return}const styles=stylesFrom(row),primary=[...styles].sort((a,b)=>b[1]-a[1])[0],date=new Date(row.submitted_at).toLocaleString('en-AU');$('individualReport').innerHTML=`<div class="eyebrow">Academy-only individual response</div><h2 style="font-size:32px;margin:8px 0 4px"></h2><p class="intro"></p><div class="primary"><div><div class="primary-label">Most strongly experienced style in this response</div><div class="primary-name">${primary[0]} Leadership</div></div><div class="primary-score">${primary[1]}%</div></div><div class="styles">${styleMarkup(styles)}</div><div class="footer">Individual result — confidential Academy use only. Do not share with the participant.</div>`;const heading=$('individualReport').querySelector('h2'),intro=$('individualReport').querySelector('.intro');heading.textContent=row.respondent_name;intro.textContent=(row.relationship||'Relationship not recorded')+' • submitted '+date}
+    function renderRespondents(rows){const list=$('respondentList');list.replaceChildren();if(!rows.length){list.innerHTML='<div class="empty">No completed responses.</div>';renderIndividual(null);return}rows.forEach((row,index)=>{const b=document.createElement('button');b.className='respondent-btn'+(index===0?' active':'');const n=document.createElement('div');n.className='respondent-name';n.textContent=row.respondent_name;const m=document.createElement('div');m.className='respondent-meta';m.textContent=(row.relationship||'Not recorded')+' • '+new Date(row.submitted_at).toLocaleDateString('en-AU');b.append(n,m);b.addEventListener('click',()=>{list.querySelectorAll('button').forEach(x=>x.classList.remove('active'));b.classList.add('active');renderIndividual(row)});list.appendChild(b)});renderIndividual(rows[0])}
+    function refresh(){const {con,ind}=selectedRows();renderConsolidated(con);renderRespondents(ind)}
+    function populateParticipants(){const cohort=$('cohortSelect').value;const names=[...new Set([...consolidatedRows,...individualRows].filter(r=>r.cohort===cohort).map(r=>r.participant_name))].sort();$('participantSelect').replaceChildren(...names.map(name=>new Option(name,name)));refresh()}
+    function populateFilters(){const cohorts=[...new Set([...consolidatedRows,...individualRows].map(r=>r.cohort))].sort();$('cohortSelect').replaceChildren(...cohorts.map(c=>new Option(c,c)));populateParticipants()}
+    async function loadData(){const [conResult,indResult]=await Promise.all([client.rpc('get_consolidated_report'),client.rpc('get_academy_individual_results')]);if(conResult.error||indResult.error){$('statusMessage').className='message error';$('statusMessage').textContent=(conResult.error||indResult.error).message;return false}consolidatedRows=conResult.data||[];individualRows=indResult.data||[];if(!consolidatedRows.length&&!individualRows.length){$('statusMessage').textContent='No completed non-test responses are available.';return false}populateFilters();$('login').classList.add('hidden');$('app').classList.remove('hidden');return true}
+    async function requireApprovedSession(){const ok=await loadData();if(!ok){await client.auth.signOut();$('login').classList.remove('hidden');$('app').classList.add('hidden')}}
+    $('cohortSelect').addEventListener('change',populateParticipants);$('participantSelect').addEventListener('change',refresh);
+    $('consolidatedTab').addEventListener('click',()=>{$('consolidatedTab').classList.add('active');$('individualTab').classList.remove('active');$('consolidatedPanel').classList.remove('hidden');$('individualPanel').classList.add('hidden')});
+    $('individualTab').addEventListener('click',()=>{$('individualTab').classList.add('active');$('consolidatedTab').classList.remove('active');$('individualPanel').classList.remove('hidden');$('consolidatedPanel').classList.add('hidden')});
+    $('sendLink').addEventListener('click',async()=>{const email=$('email').value.trim();if(!email){$('loginMessage').textContent='Please enter your approved email address.';return}$('loginMessage').textContent='Sending your secure link…';const{error}=await client.auth.signInWithOtp({email,options:{emailRedirectTo:window.location.href}});$('loginMessage').textContent=error?error.message:'Check your email and open the secure sign-in link.'});
+    $('print').addEventListener('click',()=>window.print());$('signOut').addEventListener('click',async()=>{await client.auth.signOut();location.reload()});
+    client.auth.getSession().then(({data})=>{if(data.session)requireApprovedSession()});client.auth.onAuthStateChange((event,session)=>{if(session)setTimeout(requireApprovedSession,0)});
+  </script>
+</body>
+</html>
