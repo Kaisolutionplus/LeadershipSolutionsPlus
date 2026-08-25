@@ -323,21 +323,12 @@
       </div>
     </section>
 
-    <!-- RESULTS -->
+    <!-- THANK YOU -->
     <section id="resultsScreen" style="display:none;">
-      <div class="kicker kicker-lg">Your Leadership Pulse Check</div>
-      <p class="rinterp" id="rInterp" style="font-size:26px; max-width:30ch; margin-bottom:10px;"></p>
-
-      <div class="circumplex-wrap">
-        <div class="circumplex-plot" id="circumplex"></div>
-        <div class="circumplex-side">
-          <div class="rchart-title">Your four leadership styles</div>
-          <div class="style-legend" id="styleLegend"></div>
-          <p class="circumplex-hint">Your primary style is the highest-scoring of the four. The percentages show how consistently each style was experienced across its 10 behaviours.</p>
-        </div>
-      </div>
-
-      <p class="thanks-note" id="thanksNote">Thank you, this snapshot is yours to reflect on.</p>
+      <div class="kicker kicker-lg">Survey complete</div>
+      <p class="rinterp" style="font-size:34px; max-width:24ch; margin-bottom:18px;">Thank you for completing the Leadership Strengths Pulse.</p>
+      <p style="font-size:18px; line-height:1.65; max-width:52ch; color:#d8d8d8;">Your response has been securely recorded and will be combined with feedback from the other respondents to create one consolidated leadership profile.</p>
+      <p class="thanks-note">Individual respondent results are not displayed or shared.</p>
     </section>
   </main>
 </div>
@@ -771,7 +762,7 @@ function render(){
   back.style.visibility = idx===0 ? "hidden" : "visible";
   const next = document.getElementById("nextBtn");
   next.disabled = answers[idx]===-1;
-  next.textContent = idx===39 ? "See my results \u2192" : (idx===9 || idx===19 || idx===29 ? "Continue \u2192" : "Next behaviour \u2192");
+  next.textContent = idx===39 ? "Submit response \u2192" : (idx===9 || idx===19 || idx===29 ? "Continue \u2192" : "Next behaviour \u2192");
 
   const answered = answers.filter(a=>a!==-1).length;
   document.getElementById("progressFill").style.width = (answered/40*100)+"%";
@@ -859,19 +850,6 @@ function drawCircumplex(styles){
 }
 
 function showResults(){
-  const scores = answers.slice();
-  // 40 behaviours, scored 0/1/2. Each style contains 10 behaviours (20 points max).
-  const styleDefs = [
-    { key:"EN", name:"Encouraging", start:0,  colour:"#E6F301" },
-    { key:"RE", name:"Relational",  start:10, colour:"#C9D900" },
-    { key:"AC", name:"Achievement", start:20, colour:"#AEBF00" },
-    { key:"RF", name:"Reflective",  start:30, colour:"#91A600" }
-  ];
-  const styles = styleDefs.map(s=>{
-    const subtotal = scores.slice(s.start, s.start+10).reduce((a,b)=>a+b,0);
-    return { ...s, val: Math.round((subtotal / 20) * 100) };
-  });
-
   document.getElementById("surveyScreen").style.display="none";
   document.getElementById("styleIntroScreen").style.display="none";
   document.getElementById("resultsScreen").style.display="block";
@@ -880,25 +858,7 @@ function showResults(){
   document.getElementById("progressFill").style.width="100%";
   document.getElementById("answeredCount").textContent="40";
 
-  // Strengths-based result: show the highest-scoring leadership style, not an overall average.
-  const primary = styles.reduce((best, current) => current.val > best.val ? current : best, styles[0]);
-  document.getElementById("rInterp").innerHTML =
-    'Your primary style of leadership is <strong style="color:var(--lime);">' + primary.name + ' (' + primary.val + '%)</strong>.';
-
-  drawCircumplex(styles);
-
-  document.getElementById("styleLegend").innerHTML = styles.map((s,i)=>`
-    <div class="style-item">
-      <span class="style-num">0${i+1}</span>
-      <span class="style-swatch" style="background:${s.colour}"></span>
-      <span class="nm">${s.name}</span>
-      <span class="sc">${s.val}%</span>
-    </div>`).join("");
-
-  const name = document.getElementById("userName").value.trim();
-  const subj = (document.getElementById("subjectName").value.trim()) || "this leader";
-  document.getElementById("thanksNote").textContent =
-    (name? name+", ":"") + "this snapshot reflects how you experience " + subj + " across 40 behaviours and four leadership styles. Solutions Plus — we bring the +.";
+  window.scrollTo(0,0);
 }
 
 // show a hero photo on the welcome screen
