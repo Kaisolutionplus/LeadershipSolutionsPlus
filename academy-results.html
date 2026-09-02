@@ -1,0 +1,1062 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex,nofollow" />
+  <title>Solutions+ In-House 360 Feedback Collation</title>
+  <style>
+    :root{
+      --bg:#090a09;
+      --panel:#111311;
+      --panel-2:#171917;
+      --line:#2b2f2b;
+      --text:#f5f6f3;
+      --muted:#a9aea7;
+      --lime:#e6f301;
+      --lime-soft:#cbd700;
+      --danger:#ff6b6b;
+      --warning:#ffc857;
+      --ok:#98d27a;
+      --shadow:0 18px 50px rgba(0,0,0,.28);
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:Inter,Roboto,"Helvetica Neue",Arial,sans-serif}
+    body{background:radial-gradient(circle at 80% 0%,rgba(230,243,1,.07),transparent 28%),var(--bg)}
+    button,input,select{font:inherit}
+    button{cursor:pointer}
+    .hidden{display:none!important}
+
+    .login-wrap{min-height:100vh;display:grid;place-items:center;padding:28px}
+    .login-card{width:min(520px,100%);background:linear-gradient(180deg,#141714,#0f110f);border:1px solid var(--line);border-radius:22px;padding:32px;box-shadow:var(--shadow)}
+    .eyebrow{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--lime);font-weight:800}
+    h1,h2,h3,p{margin-top:0}
+    .login-card h1{font-size:34px;line-height:1.04;margin:14px 0 12px}
+    .login-card p{color:var(--muted);line-height:1.6}
+    .field{margin-top:24px}
+    .field label{display:block;color:#d7dad5;font-size:13px;margin-bottom:8px}
+    .field input{width:100%;background:#0b0d0b;color:var(--text);border:1px solid #343934;border-radius:12px;padding:14px 15px;outline:none}
+    .field input:focus{border-color:var(--lime)}
+    .primary-btn{width:100%;margin-top:14px;border:0;border-radius:12px;background:var(--lime);color:#111;font-weight:800;padding:14px 18px}
+    .login-error{color:#ff8b8b;font-size:13px;margin-top:12px;min-height:18px}
+    .security-note{font-size:11px!important;color:#7f857d!important;margin-top:18px!important}
+
+    .app{min-height:100vh}
+    header{position:sticky;top:0;z-index:30;background:rgba(9,10,9,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+    .topbar{max-width:1480px;margin:auto;padding:18px 24px;display:flex;align-items:center;gap:18px}
+    .brand{min-width:250px}
+    .brand .title{font-weight:850;font-size:20px;letter-spacing:-.02em}
+    .brand .title span{color:var(--lime)}
+    .brand .sub{font-size:11px;color:var(--muted);letter-spacing:.14em;text-transform:uppercase;margin-top:4px}
+    .top-actions{margin-left:auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+    .select,.ghost-btn{background:#111411;color:var(--text);border:1px solid #333833;border-radius:10px;padding:10px 12px}
+    .cohort-control,.participant-control{display:flex;align-items:center;gap:8px}
+    .cohort-control label,.participant-control label{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:800}
+    .participant-control .select{min-width:190px}
+    .ghost-btn:hover{border-color:#555c55}
+    .admin-chip{font-size:12px;color:#cdd1ca;background:#151815;border:1px solid var(--line);border-radius:999px;padding:9px 12px}
+
+    main{max-width:1480px;margin:auto;padding:28px 24px 56px}
+    .hero{display:flex;gap:20px;justify-content:space-between;align-items:flex-end;margin-bottom:22px}
+    .hero h1{font-size:38px;margin-bottom:7px;letter-spacing:-.035em}
+    .hero p{color:var(--muted);margin:0;line-height:1.5}
+    .summary{display:grid;grid-template-columns:repeat(4,minmax(150px,1fr));gap:12px;margin-bottom:24px}
+    .kpi{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:17px 18px}
+    .kpi .label{color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.09em}
+    .kpi .value{font-size:28px;font-weight:850;margin-top:7px}
+    .kpi .value.lime{color:var(--lime)}
+
+    .tabs{display:flex;gap:6px;border-bottom:1px solid var(--line);margin-bottom:22px;overflow:auto}
+    .tab{border:0;background:transparent;color:#969c94;padding:13px 16px;font-weight:750;border-bottom:3px solid transparent;white-space:nowrap}
+    .tab.active{color:var(--text);border-bottom-color:var(--lime)}
+
+    .toolbar{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+    .toolbar .spacer{margin-left:auto}
+    .status-line{color:var(--muted);font-size:13px}
+    .action-btn{background:var(--lime);color:#111;border:0;border-radius:10px;padding:10px 13px;font-weight:850}
+    .action-btn.secondary{background:#171a17;color:var(--text);border:1px solid #3b413b}
+    .action-btn:disabled{opacity:.45;cursor:not-allowed}
+
+    .participant-layout{display:grid;grid-template-columns:300px 1fr;gap:16px;align-items:start}
+    .participant-picker{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:16px;position:sticky;top:96px}
+    .picker-title{display:flex;justify-content:space-between;align-items:center;gap:10px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+    .picker-title h3{margin:0;font-size:17px}
+    .select-all{display:flex;align-items:center;gap:8px;font-size:12px;color:#d9ddd7;font-weight:700}
+    .select-all input,.participant-check input{accent-color:var(--lime);width:16px;height:16px}
+    .participant-list{display:grid;gap:6px;margin-top:10px;max-height:520px;overflow:auto}
+    .participant-check{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 8px;border-radius:10px}
+    .participant-check:hover{background:#151815}
+    .participant-check label{display:flex;align-items:center;gap:9px;font-size:13px;font-weight:750;cursor:pointer;min-width:0}
+    .participant-check .mini-state{font-size:10px;color:var(--muted)}
+
+    .completion-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(370px,1fr));gap:16px}
+    .completion-card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px}
+    .completion-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:14px}
+    .completion-head h3{font-size:21px;margin:0}
+    .completion-head .small{color:var(--muted);font-size:12px;margin-top:5px}
+    .progress-line{height:7px;background:#252925;border-radius:999px;overflow:hidden;margin:12px 0 15px}
+    .progress-line span{display:block;height:100%;background:var(--lime)}
+    .respondent{display:grid;grid-template-columns:1fr auto;gap:12px;padding:10px 0;border-top:1px solid #252925}
+    .respondent:first-of-type{border-top:0}
+    .respondent .name{font-size:13px;font-weight:750}
+    .respondent .detail{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.4}
+    .close-btn{width:100%;margin-top:14px;background:#1b1e1b;color:var(--text);border:1px solid #454b45;border-radius:11px;padding:11px;font-weight:800}
+    .close-btn:hover:not(:disabled){border-color:var(--lime);color:var(--lime)}
+    .close-btn:disabled{cursor:not-allowed;opacity:.55}
+    .close-btn.danger{border-color:#694141;color:#ffb0b0}
+
+    .badge{display:inline-flex;align-items:center;border-radius:999px;padding:6px 9px;font-size:11px;font-weight:800;letter-spacing:.03em}
+    .badge.open{background:rgba(230,243,1,.12);color:var(--lime);border:1px solid rgba(230,243,1,.25)}
+    .badge.closed{background:#252925;color:#c5cac2;border:1px solid #3a4039}
+    .badge.completed{background:rgba(152,210,122,.11);color:#b9e8a2;border:1px solid rgba(152,210,122,.24)}
+    .badge.pending{background:rgba(255,200,87,.11);color:#ffd982;border:1px solid rgba(255,200,87,.22)}
+
+    .table-wrap{background:var(--panel);border:1px solid var(--line);border-radius:16px;overflow:auto}
+    table{width:100%;border-collapse:collapse;min-width:1120px}
+    th{position:sticky;top:0;background:#171a17;color:#c9cdc7;font-size:11px;text-transform:uppercase;letter-spacing:.07em;text-align:left;padding:13px 12px;border-bottom:1px solid #343934;white-space:nowrap}
+    td{font-size:13px;color:#eceeea;padding:12px;border-bottom:1px solid #252925;white-space:nowrap}
+    tbody tr:hover{background:#121512}
+    .pct{font-weight:800}
+    .muted{color:var(--muted)}
+    .email{color:#bdc2ba}
+
+    .respondent-workspace{display:block}
+    .respondent-filterbar{display:flex;align-items:end;gap:14px;flex-wrap:wrap;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:16px 18px;margin-bottom:18px}
+    .respondent-filter-field{display:grid;gap:7px;min-width:280px;max-width:440px;flex:1}
+    .respondent-filter-field label{font-size:10px;text-transform:uppercase;letter-spacing:.12em;font-weight:900;color:var(--muted)}
+    .respondent-filter-field select{width:100%;min-height:44px;border:1px solid #343934;background:#101310;color:#fff;border-radius:12px;padding:0 13px;font-size:14px;font-weight:750;outline:none}
+    .respondent-filter-field select:focus{border-color:var(--lime);box-shadow:0 0 0 2px rgba(230,243,1,.14)}
+    .respondent-filter-note{font-size:12px;color:var(--muted);padding-bottom:12px}
+    .respondent-groups{display:grid;gap:22px}
+    .respondent-group{min-width:0}
+    .respondent-group-head{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--line)}
+    .respondent-group-head h3{margin:0;font-size:24px;letter-spacing:-.02em}
+    .respondent-group-head .group-meta{font-size:12px;color:var(--muted)}
+    .respondent-score-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(390px,1fr));gap:14px}
+    .respondent-score-card{background:#f8f8f4;color:#0a0a0a;border:1px solid #d9d9d1;border-radius:18px;overflow:hidden;min-width:0}
+    .respondent-score-card:before{content:"";display:block;height:6px;background:var(--lime)}
+    .respondent-score-inner{padding:18px 18px 17px}
+    .respondent-score-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:4px}
+    .respondent-score-name{font-size:21px;font-weight:900;letter-spacing:-.02em;line-height:1.05}
+    .respondent-relationship{background:#0a0a0a;color:#fff;border-radius:999px;padding:7px 10px;font-size:10px;font-weight:850;letter-spacing:.04em;white-space:nowrap}
+    .respondent-contact{color:#666;font-size:11px;line-height:1.45;margin:7px 0 14px;overflow-wrap:anywhere}
+    .respondent-score-title{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:9px;padding-top:12px;border-top:1px solid #dfdfd8}
+    .respondent-score-title strong{font-size:11px;text-transform:uppercase;letter-spacing:.1em}
+    .respondent-score-title span{font-size:10px;color:#74746e}
+    .respondent-style-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px 16px}
+    .respondent-style-row{display:grid;grid-template-columns:86px minmax(60px,1fr) 34px;gap:8px;align-items:center;min-width:0}
+    .respondent-style-name{font-size:11px;font-weight:800;white-space:nowrap}
+    .respondent-track{height:8px;background:#e4e4de;border-radius:999px;overflow:hidden}
+    .respondent-fill{height:100%;background:var(--lime);border-radius:999px}
+    .respondent-score-pct{font-size:11px;font-weight:900;text-align:right}
+    .academy-only{display:inline-flex;align-items:center;gap:6px;background:rgba(230,243,1,.1);color:var(--lime);border:1px solid rgba(230,243,1,.24);border-radius:999px;padding:6px 9px;font-size:10px;font-weight:850;text-transform:uppercase;letter-spacing:.08em}
+    @media(max-width:900px){.respondent-filter-field{min-width:100%;max-width:none}.respondent-score-grid{grid-template-columns:1fr}.respondent-style-grid{grid-template-columns:1fr}}
+
+    .report-stack{display:grid;gap:24px;justify-items:center}
+    .a4-shell{width:min(210mm,100%);background:#fff;color:#111;box-shadow:0 18px 48px rgba(0,0,0,.35);border-radius:4px;overflow:hidden}
+    .pr-page{width:210mm;height:297mm;background:#fff;color:#0a0a0a;position:relative;overflow:hidden;font-family:Arial,Helvetica,sans-serif}
+    .pr-header{height:34mm;background:#0a0a0a;padding:8mm 13mm 6.5mm;display:flex;align-items:center;justify-content:space-between}
+    .pr-eyebrow{font-size:8.2pt;color:#e6f301;font-weight:900;letter-spacing:1.65px;text-transform:uppercase;margin-bottom:3.5mm}
+    .pr-header h1{margin:0;color:#fff;font-size:22pt;line-height:1;letter-spacing:-.7px;max-width:118mm;font-weight:800}
+    .pr-logo{width:45mm;height:auto;display:block}
+    .pr-accent{height:2.6mm;background:#e6f301}
+    .pr-content{padding:10mm 13mm 9mm}
+    .pr-hero{display:block;margin-bottom:7mm}
+    .pr-person{display:flex;align-items:flex-end;justify-content:space-between;padding-bottom:4.5mm;border-bottom:1px solid #d8d8d2;margin-bottom:5mm}
+    .pr-name{font-size:32pt;font-weight:900;line-height:.95;letter-spacing:-1.25px;margin:0}
+    .pr-meta{font-size:8.6pt;color:#555;display:flex;gap:3mm;flex-wrap:wrap;align-items:center}
+    .pr-meta span{background:#f4f4f0;padding:2.2mm 3.5mm;border-radius:99px;border:1px solid #ecece6}
+    .pr-cards{display:grid;grid-template-columns:1fr 1fr;gap:4mm;width:100%}
+    .pr-card{width:100%;height:40mm;border-radius:2.6mm;padding:5.5mm 6mm;background:#e6f301;color:#0a0a0a;display:grid;grid-template-rows:auto 1fr auto;align-items:start;overflow:hidden;border:1px solid #d3de00}
+    .pr-card-label{font-size:7.6pt;line-height:1;text-transform:uppercase;letter-spacing:1.35px;font-weight:900;opacity:.72;margin:0}
+    .pr-card-style{font-size:15.5pt;font-weight:900;line-height:1.05;align-self:center;word-break:normal;overflow-wrap:anywhere}
+    .pr-card-score{font-size:30pt;font-weight:900;line-height:.85;letter-spacing:-1px}
+    .pr-section-title{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:3.5mm}
+    .pr-section-title h2{margin:0;font-size:15.5pt;letter-spacing:-.35px;font-weight:900}
+    .pr-section-title p{margin:0;font-size:8pt;color:#7a7a7a}
+    .pr-profile{background:#fafaf7;border:1px solid #d8d8d2;border-radius:3mm;padding:5mm 5mm 4.5mm;margin-bottom:7mm}
+    .pr-profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:2.3mm 8mm}
+    .pr-style-row{display:grid;grid-template-columns:32mm 1fr 13mm;gap:3mm;align-items:center;min-height:9.5mm}
+    .pr-style-name{font-size:9pt;font-weight:800;white-space:nowrap}
+    .pr-track{height:5.4mm;background:#e7e7e1;border-radius:99px;overflow:hidden;position:relative}
+    .pr-fill{height:100%;background:#e6f301;border-radius:99px}
+    .pr-pct{font-size:9.5pt;font-weight:900;text-align:right}
+    .pr-insights-wrap{background:#0a0a0a;border-radius:3mm;padding:5mm;margin-top:1mm}
+    .pr-insights-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:4mm}
+    .pr-insights-head h2{margin:0;color:#fff;font-size:15.5pt;font-weight:900;letter-spacing:-.3px}
+    .pr-rule{width:30mm;height:2.5mm;background:#e6f301;border-radius:99px}
+    .pr-insights{display:grid;grid-template-columns:1fr 1fr;gap:4mm}
+    .pr-insight{background:#fff;border-radius:2.5mm;padding:4.7mm 5mm;min-height:53mm;position:relative;overflow:hidden}
+    .pr-insight:before{content:"";position:absolute;left:0;top:0;bottom:0;width:2.2mm;background:#e6f301}
+    .pr-insight-kicker{font-size:7.2pt;text-transform:uppercase;letter-spacing:1.2px;font-weight:900;color:#7a7a7a;margin-left:1mm;margin-bottom:1.8mm}
+    .pr-insight h3{font-size:14.5pt;margin:0 0 2mm 1mm;font-weight:900}
+    .pr-mini-score{font-size:8.1pt;font-weight:800;margin-left:1mm;margin-bottom:2.6mm;color:#555}
+    .pr-insight p{font-size:9pt;line-height:1.46;margin:0 0 0 1mm;color:#292929}
+    .pr-footer{position:absolute;left:13mm;right:13mm;bottom:7mm;display:flex;justify-content:space-between;align-items:center;border-top:1px solid #dedede;padding-top:3mm;font-size:7.2pt;color:#777}
+    .pr-footer strong{color:#0a0a0a}
+    .report-actions{display:flex;gap:8px;padding:12px;background:#111;border-top:1px solid #333;justify-content:flex-end}
+
+    .empty{background:var(--panel);border:1px dashed #343934;border-radius:16px;padding:30px;text-align:center;color:var(--muted)}
+    .error-box{background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.25);color:#ffb0b0;border-radius:12px;padding:13px 15px;margin-bottom:18px;font-size:13px;line-height:1.5}
+    .loading{padding:40px;text-align:center;color:var(--muted)}
+
+    @media(max-width:1000px){
+      .participant-layout{grid-template-columns:1fr}
+      .participant-picker{position:static}
+    }
+    @media(max-width:850px){
+      .topbar{align-items:flex-start;flex-direction:column}
+      .top-actions{margin-left:0;justify-content:flex-start}
+      .summary{grid-template-columns:repeat(2,1fr)}
+      .hero{align-items:flex-start;flex-direction:column}
+      .a4-shell{overflow:auto}
+      .pr-page{transform-origin:top left}
+    }
+    @media(max-width:520px){
+      main,.topbar{padding-left:14px;padding-right:14px}
+      .summary{grid-template-columns:1fr 1fr}
+    }
+
+    @media print{
+      @page{size:A4;margin:0}
+      body{background:#fff!important}
+      body *{visibility:hidden!important}
+      .print-target,.print-target *{visibility:visible!important}
+      .print-target{position:absolute!important;left:0!important;top:0!important;width:210mm!important;margin:0!important;box-shadow:none!important}
+      .print-target .pr-page{width:210mm!important;height:297mm!important;page-break-after:always!important;box-shadow:none!important}
+      .print-target .pr-page:last-child{page-break-after:auto!important}
+      .report-actions{display:none!important}
+    }
+  </style>
+</head>
+<body>
+
+<section id="loginScreen" class="login-wrap">
+  <div class="login-card">
+    <div class="eyebrow">Solutions Academy</div>
+    <h1>Solutions+ In-House<br>360 Feedback Collation</h1>
+    <p>Academy administration view for participant status, participant reports and respondent-level scoring.</p>
+    <div class="field">
+      <label for="adminEmail">Authorised admin email</label>
+      <input id="adminEmail" type="email" autocomplete="email" placeholder="academy@solutionsplus.au" />
+    </div>
+    <button id="enterBtn" class="primary-btn">Open Results Centre</button>
+    <div id="loginError" class="login-error"></div>
+    <p class="security-note">Access is checked against the authorised report admin list in Supabase. Participant reports are generated from consolidated scores only.</p>
+  </div>
+</section>
+
+<div id="app" class="app hidden">
+  <header>
+    <div class="topbar">
+      <div class="brand">
+        <div class="title">Solutions<span>+</span> Academy</div>
+        <div class="sub">Solutions+ · In-House 360 Feedback Collation</div>
+      </div>
+      <div class="top-actions">
+        <div class="cohort-control">
+          <label for="cohortSelect">Cohort</label>
+          <select id="cohortSelect" class="select" aria-label="Choose cohort"></select>
+        </div>
+        <div class="participant-control">
+          <label for="participantSelect">Participant</label>
+          <select id="participantSelect" class="select" aria-label="Choose participant">
+            <option value="__all__">All participants</option>
+          </select>
+        </div>
+        <button id="refreshBtn" class="ghost-btn">Refresh</button>
+        <span id="adminChip" class="admin-chip"></span>
+        <button id="signOutBtn" class="ghost-btn">Exit</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="hero">
+      <div>
+        <div class="eyebrow">Academy backend</div>
+        <h1>Results Centre</h1>
+        <p>Choose a cohort first, then select a participant or All participants. The same selection flows through status, reports and respondent scoring.</p>
+      </div>
+      <div id="lastUpdated" class="status-line"></div>
+    </div>
+
+    <div id="errorBox" class="error-box hidden"></div>
+
+    <section class="summary">
+      <div class="kpi"><div class="label">Selected participants</div><div id="kpiParticipants" class="value">—</div></div>
+      <div class="kpi"><div class="label">Completed responses</div><div id="kpiCompleted" class="value lime">—</div></div>
+      <div class="kpi"><div class="label">Pending responses</div><div id="kpiPending" class="value">—</div></div>
+      <div class="kpi"><div class="label">Closed surveys</div><div id="kpiClosed" class="value">—</div></div>
+    </section>
+
+    <nav class="tabs" aria-label="Results tabs">
+      <button class="tab active" data-tab="participants">Participants</button>
+      <button class="tab" data-tab="reports">Participant Report</button>
+      <button class="tab" data-tab="respondents">Respondent Scores</button>
+    </nav>
+
+    <section id="tab-participants" class="tab-panel">
+      <div class="toolbar">
+        <div id="participantSelectionText" class="status-line"></div>
+      </div>
+      <div id="participantStatusGrid" class="completion-grid"><div class="loading">Loading participant status…</div></div>
+    </section>
+
+    <section id="tab-reports" class="tab-panel hidden">
+      <div class="toolbar">
+        <div class="status-line">Premium A4 participant report using consolidated results only.</div>
+        <div class="spacer"></div>
+        <button id="downloadSelectedBtn" class="action-btn">Save Selected PDF (A4)</button>
+        <button id="printSelectedBtn" class="action-btn secondary">Print Selected</button>
+      </div>
+      <div id="reportStack" class="report-stack"></div>
+    </section>
+
+    <section id="tab-respondents" class="tab-panel hidden">
+      <div class="respondent-workspace">
+        <div class="respondent-filterbar">
+          <div id="respondentSelectionText" class="respondent-filter-note">Choose a cohort, then select one participant from the top filter to view their respondent scoring.</div>
+          <div class="spacer"></div>
+          <span class="academy-only">Academy only</span>
+        </div>
+        <div id="respondentCards" class="respondent-groups"></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+
+<script>
+const SUPABASE_URL = "https://dsszlqxxbkdcrvhcqkzt.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_FJXAmlJ7Q3OYKRLYwoBliw_8OS4Dmv2";
+
+let currentAdmin = "";
+let allConsolidated = [];
+let allIndividual = [];
+let allCompletion = [];
+let allCampaigns = [];
+let activeCohort = "";
+let selectedParticipants = new Set();
+let lastSelectionCohort = "";
+
+const scoreStyles = [
+  ["Encouraging","encouraging"],
+  ["Relational","relational"],
+  ["Achievement","achievement"],
+  ["Reflective","reflective"],
+  ["Accommodating","accommodating"],
+  ["Reserved","reserved"],
+  ["Critical","critical"],
+  ["Controlling","controlling"]
+];
+
+const REPORT_LOGO_SRC = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAACAAAAALvCAYAAADxxSUpAAAQAElEQVR4AezdB5xcZb3/8e/vzG7aljQSspuEjihiB0XBq6iogIoVUUFAQBErglJEwYIiig2wAEpVFBXLtV2viv69dtTrFStqgGRnNwkpuzObtjvn9/+dAEpJ2SQ7s3POfM7reXZ2Zs55nt/vfaac8sxMIiYEEEAAAQQQQAABBBBAAAEEECi6APkhgAACCCCAAAIIIIAAAggggEDxBcQAgBZYyaSIAAIIIIAAAggggAACCCDQ6gLkjwACCCCAAAIIIIAAAggggAACxRcQAwBaYSWTIwIIIIAAAggggAACCCCAQIsLkD4CCCCAAAIIIIAAAggggAACCBRfIDLkGwACgYIAAggggAACCCCAAAIIIIBAkQXIDQEEEEAAAQQQQAABBBBAAAEEii+QZcgAgEyBigACCCCAAAIIIIAAAggggEBxBcgMAQQQQAABBBBAAAEEEEAAAQSKL7AxQwYAbGTgDwIIIIAAAggggAACCCCAAAJFFSAvBBBAAAEEEEAAAQQQQAABBBAovsDdGTIA4G4H/iKAAAIIIIAAAggggAACCCBQTAGyQgABBBBAAAEEEEAAAQQQQACB4gvckyEDAO6B4AIBBBBAAAEEEEAAAQQQQACBIgqQEwIIIIAAAggggAACCCCAAAIIFF/g3gwZAHCvBJcIIIAAAggggAACCCCAAAIIFE+AjBBAAAEEEEAAAQQQQAABBBBAoPgC/8qQAQD/ouAfBBBAAAEEEEAAAQQQQAABBIomQD4IIIAAAggggAACCCCAAAIIIFB8gX9nyACAf1vwHwIIIIAAAggggAACCCCAAALFEiAbBBBAAAEEEEAAAQQQQAABBBAovsB9MmQAwH0w+BcBBBBAAAEEEEAAAQQQQACBIgmQCwIIIIAAAggggAACCCCAAAIIFF/gvhkyAOC+GvyPAAIIIIAAAggggAACCCCAQHEEyAQBBBBAAAEEEEAAAQQQQAABBIovcL8MGQBwPw6uIIAAAggggAACCCCAAAIIIFAUAfJAAAEEEEAAAQQQQAABBBBAAIHiC9w/QwYA3N+DawgggAACCCCAAAIIIIAAAggUQ4AsEEAAAQQQQAABBBBAAAEEEECg+AIPyJABAA8A4SoCCCCAAAIIIIAAAggggAACRRAgBwQQQAABBBBAAAEEEEAAAQQQKL7AAzNkAMADRbiOAAIIIIAAAggggAACCCCAQP4FyAABBBBAAAEEEEAAAQQQQAABBIov8KAMGQDwIBJuQAABBBBAAAEEEEAAAQQQQCDvAsSPAAIIIIAAAggggAACCCCAAALFF3hwhgwAeLAJtyCAAAIIIIAAAggggAACCCCQbwGiRwABBBBAAAEEEEAAAQQQQACB4gtsIkMGAGwChZsQQAABBBBAAAEEEEAAAQQQyLMAsSOAAAIIIIAAAggggAACCCCAQPEFNpUhAwA2pcJtCCCAAAIIIIAAAggggAACCORXgMgRQAABBBBAAAEEEEAAAQQQQKD4ApvMkAEAm2ThRgQQQAABBBBAAAEEEEAAAQTyKkDcCCCAAAIIIIAAAggggAACCCBQfIFNZ8gAgE27cCsCCCCAAAIIIIAAAggggAAC+RQgagQQQAABBBBAAAEEEEAAAQQQKL7AZjJkAMBmYLgZAQQQQAABBBBAAAEEEEAAgTwKEDMCCCCAAAIIIIAAAggggAACCBRfYHMZMgBgczLcjgACCCCAAAIIIIAAAggggED+BIgYAQQQQAABBBBAAAEEEEAAAQSKL7DZDBkAsFka7kAAAQQQQAABBBBAAAEEEEAgbwLEiwACCCCAAAIIIIAAAggggAACxRfYfIYMANi8DfcggAACCCCAAAIIIIAAAgggkC8BokUAAQQQQAABBBBAAAEEEEAAgeILbCFDBgBsAYe7EEAAAQQQQAABBBBAAAEEEMiTALEigAACCCCAAAIIIIAAAggggEDxBbaUIQMAtqTDfQgggAACCCCAAAIIIIAAAgjkR4BIEUAAAQQQQAABBBBAAAEEEECg+AJbzJABAFvk4U4EEEAAAQQQQAABBBBAAAEE8iJAnAgggAACCCCAAAIIIIAAAgggUHyBLWfIAIAt+3AvAggggAACCCCAAAIIIIAAAvkQIEoEEEAAAQQQQAABBBBAAIFxExioaG7fkPahbtpg3KBpaNsFtrIEAwC2AsTdCCCAAAIIIIAAAggggAACCORBgBgRQAABBBBAAAEEEEAAAQR2XGBgQB3lis5NzX5lZj+hbtqgXLXby4PJJ8qrtOuOq9PCtghsbV4GAGxNiPsRQAABBBBAAAEEEEAAAQQQaH4BIkQAAQQQQAABBBBAAAEEENhBAXe1e4feL9l75MpObM+RRN2UQeaT+Gu9ZP/bV9Hrl7u6wopSf4Gt9sAAgK0SMQMCCCCAAAIIIIAAAggggAACzS5AfAgggAACCCCAAAIIIIAAAjsq0F/VE93s1TvaTistb6YZJrtkpKp3Zz+bIKY6C2y9eQYAbN2IORBAAAEEEEAAAQQQQAABBBBobgGiQwABBBBAAAEEEEAAAQQQGAeB5Fi5Jo9DQy3YhJ2SSufcsVozWzD5xqU8hp4YADAGJGZBAAEEEEAAAQQQQAABBBBAoJkFiA0BBBBAAAEEEEAAAQQQQGA8BHz2eLTSom1MkexNkxKd6S7OQas+01haBX8sSsyDAAIIIIAAAggggAACCCCAQPMKEBkCCCCAAAIIIIAAAggggAACTSHgZmcODOvCoSExmGL818iYWmQAwJiYmAkBBBBAAAEEEEAAAQQQQACBZhUgLgQQQAABBBBAAAEEEEAAAQSaR8Dd3lI1vXNgQHObJ6oiRDK2HBgAMDYn5kIAAQQQQAABBBBAAAEEEECgOQWICgEEEEAAAQQQQAABBBBAAIHmEihJ9hrv1JmLF2uqmMZHYIytMABgjFDMhgACCCCAAAIIIIAAAggggEAzChATAggggAACCCCAAAIIIIAAAk0oMDn7JoDSdL1j2TJ1NmF8uQtprAEzAGCsUsyHAAIIIIAAAggggAACCCCAQPMJEBECCCCAAAIIIIAAAggggAACzStgdvboVL1noMLPAezgShrz4gwAGDMVMyKAAAIIIIAAAggggAACCCDQbALEgwACCCCAAAIIIIAAAggggECzC9gpqfT2xYOa1eyRNm98Y4+MAQBjt2JOBBBAAAEEEEAAAQQQQAABBJpLgGgQQAABBBBAAAEEEEAAAQQQaH6BKZK9MTGdKabtE9iGpRgAsA1YzIoAAggggAACCCCAAAIIIIBAMwkQCwIIIIAAAggggAACCCCAAAJ5ETCzt/VX9YElQ5qdl5ibJc5tiYMBANuixbwIIIAAAggggAACCCCAAAIINI8AkSCAAAIIIIAAAggggAACCCCQLwG3MxLTOwcqmpuvwCc02m3qnAEA28TFzAgggAACCCCAAAIIIIAAAgg0iwBxIIAAAggggAACCCCAAAIIIJAvAZcSmb1arrPKrmn5in6iot22fpNtm525EUAAAQQQQAABBBBAAAEEEECgKQQIAgEEEEAAAQQQQAABBBBAAIE8CrimpGanqaJzGQQwhhW4jbMwAGAbwZgdAQQQQAABBBBAAAEEEEAAgWYQIAYEEEAAAQQQQAABBBBAAAEEci1gdrYqei8/B6AtTtt6JwMAtlWM+RFAAAEEEEAAAQQQQAABBBCYeAEiQAABBBBAAAEEEEAAAQQQQCD/Aom9NpXevmRIs/OfTF0y2OZGGQCwzWQsgAACCCCAAAIIIIAAAggggMBEC9A/AggggAACCCCAAAIIIIAAAgUQcE2R7PUl6UwxbUJg229iAMC2m7EEAggggAACCCCAAAIIIIAAAhMrQO8IIIAAAggggAACCCCAAAIIFEcgcbO39ld14eJBzSpOWuOQyXY0wQCA7UBjEQQQQAABBBBAAAEEEEAAAQQmUoC+EUAAAQQQQAABBBBAAAEEECiagLudWUp03kBFc4uW2/bmsz3LMQBge9RYBgEEEEAAAQQQQAABBBBAAIGJE6BnBBBAAAEEEEAAAQQQQAABBAoqYK9OpbOXuToLmuC2pLVd8zIAYLvYWAgBBBBAAAEEEEAAAQQQQACBiRKgXwQQQAABBBBAAAEEEEAAAQQKKzBFsjePVnTOIlf8rxaeti91BgBsnxtLIYAAAggggAACCCCAAAIIIDAxAvSKAAIIIIAAAggggAACCCCAQNEFzM6eUtEFLf1zANu5jhkAsJ1wLIYAAggggAACCCCAAAIIIIDARAjQJwIIIIAAAggggAACCCCAAAKtIOBmr0ult5eHtFMr5PvAHLf3OgMAtleO5RBAAAEEEEAAAQQQQAABBBBovAA9IoAAAggggAACCCCAAAIIINAqApPN7FSXznRXq53X3u51DNR207EgAggggAACCCCAAAIIIIAAAo0WoD8EEEAAAQQQQAABBBBAAAEEWkcgTvy3mdkZ/cO6YNUqzVDLTNufKAMAtt+OJRFAAAEEEEAAAQQQQAABBBBorAC9IYAAAggggAACCCCAAAIIINCKAm5nrW3T+UuXaueWSH8HkmQAwA7gsSgCCCCAAAIIIIAAAggggAACjRSgLwQQQAABBBBAAAEEEEAAAQRaVcBlr/FpOuu2FeouusGO5McAgB3RY1kEEEAAAQQQQAABBBBAAAEEGidATwgggAACCCCAAAIIIIAAAgi0rIBJU1LZmzsm6yx3TSowxA6lxgCAHeJjYQQQQAABBBBAAAEEEEAAAQQaJUA/CCCAAAIIIIAAAggggAACCCAgt7MHhvW+/ormFFNjx7JiAMCO+bE0AggggAACCCCAAAIIIIAAAo0RoBcEEEAAAQQQQAABBBBAAAEEENgo4G5vcOncoSHttPGGIv3ZwVwYALCDgCyOAAIIIIAAAggggAACCCCAQCME6AMBBBBAAAEEEEAAAQQQQAABBP4lMMlkr61q488BtP3r1gL8s6MpMABgRwVZHgEEEEAAAQQQQAABBBBAAIH6C9ADAggggAACCCCAAAIIIIAAAgjcR8Cldpmd3lLRe1au1PT73JXnf3c49mSHW6ABBBBAAAEEEEAAAQQQQAABBBCoswDNI4AAAggggAACCCCAAAIIIIBA/QIS5hPQAJDfXEUCBAgQIECAAAECBAgQ6LuA/AQIECBAgAABAgQIECBAgED9AhIWENAAUABdSQIECBAgQIAAAQIECPRbQHoCBAgQIECAAAECBAgQIECgfgEJSwhoACiprzYBAgQIECBAgAABAgT6JCApAQIECBAgQIAAAQIECBAgUL+AhEUENAAUYVeUAAECBAgQIECAAAEC/RWQnAABAgQIECBAgAABAgQIEKhfQMIyAhoAyvirToAAAQIECBAgQIAAgb4IyEmAAAECBAgQIECAAAECBAjULyBhPgENAPmsVSJAgAABAgQIECBAgACBfwq4T4AAAQIECBAgQIAAAQIECNQvIGFGAQ0AGbGVIkCAAAECBAgQIECAQIGBCRAgQIAAAQIECBAgQIAAAQL1C0hYUkADQEl9tQkQIECAAAECBAgQINAnAUkJECBAgAABAgQIECBAgACB+gUkLCOgAaCMu6oECBAgQIAAAQIECBA4V8AtAgQIECBAgAABAgQIECBAoH4BCQsLaAAo+AZUIkCAAAECBAgQIECgwP8CchMgQIAAAQIECBAgQIAAAQL1C0hYWEADQOlzoD4BAgQIECBAgAABAgT6ICAjAQIECBAgQIAAAQIECBAgUL+AhMWFRcb7AAAAAElFTkSuQmCC';
+
+const reportInsights = {
+  Encouraging: {
+    emerging: "People around you are not yet consistently experiencing encouragement, coaching or development as a visible part of your leadership. There may be opportunities to make your support more intentional by recognising contribution, helping others think through challenges and creating more space for people to build confidence and capability.",
+    developing: "People around you experience encouragement and support from you at times, although this may vary depending on the person or situation. Making these behaviours more consistent can help people feel increasingly valued, supported and confident to take greater responsibility for their work.",
+    evident: "People around you are frequently experiencing you as someone who supports their growth, recognises their contribution and encourages them to think for themselves. This is likely helping people build confidence, capability and a stronger sense of ownership in their work.",
+    strongly: "People around you consistently experience encouragement, recognition and genuine belief in their capability. Your leadership is likely creating an environment where people feel supported to learn, contribute and take ownership, strengthening both individual growth and team performance."
+  },
+  Relational: {
+    emerging: "People around you are not yet consistently experiencing listening, inclusion and relationship-building as a strong part of your leadership. There may be opportunities to be more intentional about understanding other perspectives, involving people and creating stronger connection in everyday interactions.",
+    developing: "People around you experience moments of connection, listening and inclusion from you, although this may not yet feel consistent across all relationships. Strengthening these behaviours can help build greater trust and make it easier for people to communicate openly and work together.",
+    evident: "People around you are frequently experiencing you as someone who listens, respects different perspectives and includes others in conversations that affect them. This is likely supporting stronger trust, communication and collaboration across the people you work with.",
+    strongly: "People around you consistently experience trust, connection and inclusion in the way you lead. They are likely to feel heard, respected and comfortable contributing their perspective, creating stronger working relationships and more effective collaboration across the business."
+  },
+  Achievement: {
+    emerging: "People around you may not yet consistently experience clear direction, expectations or a strong connection between their work and the outcome being pursued. There may be opportunities to create greater clarity around priorities, ownership and what success looks like.",
+    developing: "People around you are beginning to experience greater clarity around goals, expectations and results, although this may vary across situations. Making purpose and priorities more visible can help people understand what matters and how their contribution connects to the bigger picture.",
+    evident: "People around you are frequently experiencing clear expectations, direction and a strong focus on meaningful outcomes. They are likely to understand what success looks like, what they are responsible for and how their work contributes to broader team or business results.",
+    strongly: "People around you consistently experience a strong sense of purpose, accountability and momentum in the way you lead. Your ability to connect everyday work to meaningful outcomes is likely helping people take ownership, maintain focus and deliver stronger results."
+  },
+  Reflective: {
+    emerging: "People around you may have limited visibility of how you seek feedback, consider your impact or adapt your approach. There may be opportunities to make your self-awareness and willingness to learn more visible in the way you lead.",
+    developing: "People around you are beginning to experience greater openness, reflection and adaptability from you. At times they may see you reconsider your approach or respond to feedback, and greater consistency can strengthen trust in your willingness to learn and adjust.",
+    evident: "People around you are frequently experiencing you as thoughtful, genuine and open to learning. They are likely to see you consider your own contribution, listen to feedback and adjust your approach when something is not having the intended impact.",
+    strongly: "People around you consistently experience self-awareness, authenticity and openness to learning in your leadership. They are likely to trust that you will consider your own impact, remain open to feedback and adapt as circumstances or people’s needs change."
+  },
+  Accommodating: {
+    emerging: "People around you experience you as someone who can maintain positive relationships while still being clear about expectations, boundaries and what needs to be addressed. You are generally able to balance support and harmony with the confidence to have honest conversations when needed.",
+    developing: "People around you experience accommodating behaviours from you at times. Your desire to support others and maintain positive relationships may occasionally make it harder to say no, hold a firm boundary or address something that could create discomfort.",
+    evident: "People around you are frequently experiencing your desire to maintain harmony and positive relationships. At times, keeping people comfortable may carry more weight than saying what needs to be said, which can lead to difficult messages being softened or expectations and boundaries feeling less clear.",
+    strongly: "People around you consistently experience your strong desire to support others, maintain harmony and preserve relationships. While this can come from a genuinely positive intention, it may also mean difficult conversations are delayed, boundaries become flexible or decisions are influenced by a desire to avoid disappointing others. Over time, people may become less certain about what is expected or where you truly stand."
+  },
+  Reserved: {
+    emerging: "People around you experience you as willing to share your perspective, contribute to decisions and provide direction when leadership is needed. You are generally able to stay thoughtful without stepping back from difficult conversations or uncertain situations.",
+    developing: "People around you experience a more cautious or reserved approach from you at times. Your desire to think things through or avoid unnecessary conflict may occasionally lead you to hold back your view, delay a decision or step away from an uncomfortable conversation.",
+    evident: "People around you are frequently experiencing you as more cautious or less visible when situations become uncertain or difficult. At times, they may be looking for clearer direction, a firmer point of view or a decision from you sooner than it comes.",
+    strongly: "People around you consistently experience a tendency to step back when situations involve uncertainty, risk or difficult conversations. While this may come from wanting to be thoughtful and avoid unnecessary conflict, it can leave people unclear about your position, slow decisions and make ownership less certain."
+  },
+  Critical: {
+    emerging: "People around you experience you as able to identify risks and areas for improvement while still recognising what is working well. Your challenge is generally balanced with curiosity, constructive feedback and acknowledgement of contribution.",
+    developing: "People around you experience a stronger focus on problems or improvement from you at times. Your desire for quality and high standards may occasionally mean you notice what is wrong before acknowledging what is working, which can influence how feedback is received.",
+    evident: "People around you are frequently experiencing challenge, correction or a strong focus on gaps and improvement. While this may come from wanting high standards, people may become more cautious about mistakes, sharing unfinished ideas or speaking openly if they expect their contribution to be quickly challenged.",
+    strongly: "People around you consistently experience a strong focus on what needs fixing, improving or challenging. Your intention may be to protect quality and achieve strong outcomes, but if people hear more about what is wrong than what is working, confidence, openness and willingness to contribute new ideas can gradually reduce."
+  },
+  Controlling: {
+    emerging: "People around you experience appropriate space to use their judgement, make decisions and take responsibility for their work. You are generally able to provide clear standards and direction without needing to control every aspect of how the outcome is achieved.",
+    developing: "People around you experience a more hands-on approach from you at times. Your desire for certainty, accountability or high standards may occasionally lead you to become more involved in decisions or methods than the situation requires.",
+    evident: "People around you are frequently experiencing you retaining control over decisions, methods or how work is delivered. While the intention may be to maintain quality and reduce risk, this can begin to limit the space people have to use their judgement, take initiative and build ownership.",
+    strongly: "People around you consistently experience a high level of direction, involvement and control from you. This may come from a genuine desire to ensure work is completed well and standards are protected, but it can leave people with fewer opportunities to make decisions, build confidence and take full ownership of outcomes."
+  }
+};
+
+function reportBand(score){
+  const n = Number(score);
+  if(n <= 25) return "emerging";
+  if(n <= 50) return "developing";
+  if(n <= 70) return "evident";
+  return "strongly";
+}
+
+function reportInsight(style, score){
+  const names = String(style || "").split(" & ").map(s=>s.trim()).filter(Boolean);
+  if(!names.length) return "";
+  return names.map(name => reportInsights[name]?.[reportBand(score)] || "").filter(Boolean).join(" ");
+}
+
+function headers(extra={}){
+  return {"apikey":SUPABASE_PUBLISHABLE_KEY,"Authorization":`Bearer ${SUPABASE_PUBLISHABLE_KEY}`,...extra};
+}
+
+async function rest(path, options={}){
+  const response = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {...options,headers:headers(options.headers || {})});
+  const text = await response.text();
+  let data = null;
+  try{ data = text ? JSON.parse(text) : null; }catch{ data = text; }
+  if(!response.ok){
+    const message = (data && (data.message || data.hint || data.details)) || text || `Request failed (${response.status})`;
+    throw new Error(message);
+  }
+  return data;
+}
+
+async function rpc(functionName, payload){
+  const response = await fetch(`${SUPABASE_URL}/rest/v1/rpc/${functionName}`, {
+    method:"POST",headers:headers({"Content-Type":"application/json"}),body:JSON.stringify(payload)
+  });
+  const text = await response.text();
+  let data = null;
+  try{ data = text ? JSON.parse(text) : null; }catch{ data = text; }
+  if(!response.ok){
+    const message = (data && (data.message || data.hint || data.details)) || text || `Request failed (${response.status})`;
+    throw new Error(message);
+  }
+  return data;
+}
+
+function esc(value){
+  return String(value ?? "").replace(/[&<>'"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));
+}
+function formatDate(value){
+  if(!value) return "—";
+  const d = new Date(value);
+  if(Number.isNaN(d.getTime())) return value;
+  return new Intl.DateTimeFormat("en-AU",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"}).format(d);
+}
+function todayLabel(){
+  return new Intl.DateTimeFormat("en-AU",{day:"2-digit",month:"long",year:"numeric"}).format(new Date());
+}
+function campaignFor(cohort, participant){
+  return allCampaigns.find(x => x.cohort === cohort && x.participant_name === participant);
+}
+function showError(message){
+  const box = document.getElementById("errorBox");
+  box.textContent = message;
+  box.classList.remove("hidden");
+}
+function clearError(){ document.getElementById("errorBox").classList.add("hidden"); }
+
+function cohortParticipants(){
+  if(!activeCohort) return [];
+  const names = new Set();
+  allCampaigns.filter(x=>x.cohort===activeCohort).forEach(x=>names.add(x.participant_name));
+  allCompletion.filter(x=>x.cohort===activeCohort).forEach(x=>names.add(x.participant_name));
+  allConsolidated.filter(x=>x.cohort===activeCohort).forEach(x=>names.add(x.participant_name));
+  return [...names].filter(Boolean).sort((a,b)=>a.localeCompare(b,undefined,{numeric:true,sensitivity:"base"}));
+}
+
+function filteredBySelection(rows){
+  if(!activeCohort) return [];
+  return rows.filter(x => x.cohort===activeCohort && selectedParticipants.has(x.participant_name));
+}
+
+async function validateAdmin(){
+  const email = document.getElementById("adminEmail").value.trim().toLowerCase();
+  const error = document.getElementById("loginError");
+  error.textContent = "";
+  if(!email){ error.textContent = "Enter your authorised Academy or facilitator email."; return; }
+  const button = document.getElementById("enterBtn");
+  button.disabled = true;
+  button.textContent = "Checking…";
+  try{
+    const data = await rpc("validate_report_admin",{p_admin_email:email});
+    const authorised = data === true || (data && data.authorised === true);
+    if(!authorised){ error.textContent = "This email is not on the authorised report admin list."; return; }
+    currentAdmin = email;
+    sessionStorage.setItem("mini_lsi_admin",currentAdmin);
+    document.getElementById("loginScreen").classList.add("hidden");
+    document.getElementById("app").classList.remove("hidden");
+    document.getElementById("adminChip").textContent = currentAdmin;
+    await loadAll();
+  }catch(e){
+    error.textContent = `Could not verify access: ${e.message}`;
+  }finally{
+    button.disabled = false;
+    button.textContent = "Open Results Centre";
+  }
+}
+
+async function loadAll(){
+  clearError();
+  try{
+    const [consolidated,individual,completion,campaigns] = await Promise.all([
+      rest("consolidated_profile?select=*&order=cohort.asc,participant_name.asc"),
+      rest("individual_scores?select=*&order=cohort.asc,participant_name.asc,respondent_name.asc"),
+      rest("completion_status?select=*&order=cohort.asc,participant_name.asc,respondent_name.asc"),
+      rest("survey_campaigns?select=*&order=cohort.asc,participant_name.asc")
+    ]);
+    allConsolidated = consolidated || [];
+    allIndividual = individual || [];
+    allCompletion = completion || [];
+    allCampaigns = campaigns || [];
+    buildCohortFilter();
+    renderAll();
+    document.getElementById("lastUpdated").textContent = `Updated ${new Intl.DateTimeFormat("en-AU",{hour:"2-digit",minute:"2-digit"}).format(new Date())}`;
+  }catch(e){
+    showError(`Could not load Academy results: ${e.message}`);
+  }
+}
+
+function buildCohortFilter(){
+  const select = document.getElementById("cohortSelect");
+  const cohorts = [...new Set([
+    ...allCampaigns.map(x=>x.cohort),
+    ...allCompletion.map(x=>x.cohort),
+    ...allConsolidated.map(x=>x.cohort)
+  ].filter(Boolean))].sort((a,b)=>a.localeCompare(b,undefined,{numeric:true,sensitivity:"base"}));
+
+  const previous = activeCohort;
+  select.innerHTML = cohorts.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join("");
+  if(cohorts.length===0){
+    select.innerHTML = '<option value="">No cohorts found</option>';
+    activeCohort = "";
+    selectedParticipants.clear();
+    buildParticipantFilter();
+    return;
+  }
+
+  activeCohort = cohorts.includes(previous) ? previous : cohorts[cohorts.length-1];
+  select.value = activeCohort;
+
+  if(lastSelectionCohort !== activeCohort){
+    selectedParticipants = new Set(cohortParticipants());
+    lastSelectionCohort = activeCohort;
+  }else{
+    const available = new Set(cohortParticipants());
+    selectedParticipants = new Set([...selectedParticipants].filter(x=>available.has(x)));
+    if(selectedParticipants.size===0) selectedParticipants = new Set(available);
+  }
+  buildParticipantFilter();
+}
+
+function buildParticipantFilter(){
+  const select = document.getElementById("participantSelect");
+  const names = cohortParticipants();
+  if(!activeCohort || names.length===0){
+    select.innerHTML = '<option value="">No participants found</option>';
+    select.disabled = true;
+    selectedParticipants.clear();
+    return;
+  }
+
+  select.disabled = false;
+  const allSelected = selectedParticipants.size===names.length && names.every(n=>selectedParticipants.has(n));
+  let current = "__all__";
+  if(!allSelected && selectedParticipants.size===1) current = [...selectedParticipants][0];
+
+  select.innerHTML = `<option value="__all__">All participants (${names.length})</option>` +
+    names.map(name=>`<option value="${esc(name)}">${esc(name)}</option>`).join("");
+  select.value = current;
+
+  if(current === "__all__") selectedParticipants = new Set(names);
+}
+
+function renderAll(){
+  renderSummary();
+  renderParticipantStatus();
+  renderReports();
+  renderRespondentScores();
+}
+
+function renderSummary(){
+  const comp = filteredBySelection(allCompletion);
+  const campaigns = filteredBySelection(allCampaigns);
+  document.getElementById("kpiParticipants").textContent = selectedParticipants.size;
+  document.getElementById("kpiCompleted").textContent = comp.filter(x=>x.completion_status==="Completed").length;
+  document.getElementById("kpiPending").textContent = comp.filter(x=>x.completion_status==="Pending").length;
+  document.getElementById("kpiClosed").textContent = campaigns.filter(x=>x.status==="Closed").length;
+}
+
+function renderParticipantStatus(){
+  const rows = filteredBySelection(allCompletion);
+  const grid = document.getElementById("participantStatusGrid");
+  const text = document.getElementById("participantSelectionText");
+  const totalNames = cohortParticipants().length;
+  const allSelected = selectedParticipants.size===totalNames && totalNames>0;
+  text.textContent = selectedParticipants.size ? (allSelected ? `Showing all ${totalNames} participants in ${activeCohort}.` : `Showing ${[...selectedParticipants][0]} in ${activeCohort}.`) : `Choose a participant in ${activeCohort}.`;
+
+  if(selectedParticipants.size===0){ grid.innerHTML = '<div class="empty">Choose a participant from the top filter.</div>'; return; }
+
+  const grouped = new Map();
+  selectedParticipants.forEach(name=>grouped.set(name,[]));
+  rows.forEach(r=>{
+    if(!grouped.has(r.participant_name)) grouped.set(r.participant_name,[]);
+    grouped.get(r.participant_name).push(r);
+  });
+
+  grid.innerHTML = [...grouped.entries()].map(([participant,items])=>{
+    const completed = items.filter(x=>x.completion_status==="Completed").length;
+    const total = items.length;
+    const pending = items.filter(x=>x.completion_status==="Pending").length;
+    const campaign = campaignFor(activeCohort,participant);
+    const status = campaign?.status || items[0]?.survey_status || "Open";
+    const closedAt = campaign?.closed_at || items[0]?.closed_at;
+    const respondents = items.length ? items.map(r=>`
+      <div class="respondent">
+        <div><div class="name">${esc(r.respondent_name)}</div><div class="detail">${esc(r.relationship)} · ${esc(r.respondent_email)}${r.submitted_at?` · Submitted ${formatDate(r.submitted_at)}`:""}</div></div>
+        <span class="badge ${String(r.completion_status).toLowerCase()}">${esc(r.completion_status)}</span>
+      </div>`).join("") : '<div class="muted" style="padding:8px 0">No invitations found.</div>';
+
+    return `<article class="completion-card">
+      <div class="completion-head">
+        <div><h3>${esc(participant)}</h3><div class="small">${esc(activeCohort)} · ${completed} of ${total} completed${status==="Closed"&&closedAt?` · Closed ${formatDate(closedAt)}`:""}</div></div>
+        <span class="badge ${String(status).toLowerCase()}">${esc(status)}</span>
+      </div>
+      <div class="progress-line"><span style="width:${total?Math.round(completed/total*100):0}%"></span></div>
+      ${respondents}
+      <button class="close-btn ${status==="Open"&&pending>0?"danger":""}" ${status==="Closed"?"disabled":""} onclick="closeSurvey('${encodeURIComponent(activeCohort)}','${encodeURIComponent(participant)}',${completed},${total})">${status==="Closed"?"Survey Closed":"Close Survey"}</button>
+    </article>`;
+  }).join("");
+}
+
+function reportMarkup(row, includeActions=true){
+  const scores = scoreStyles.map(([name,key])=>{
+    const score = Number(row[key] ?? 0);
+    return `<div class="pr-style-row"><div class="pr-style-name">${name}</div><div class="pr-track"><div class="pr-fill" style="width:${Math.max(0,Math.min(99,score))}%"></div></div><div class="pr-pct">${score}%</div></div>`;
+  }).join("");
+
+  const primaryStyle = row.primary_style || "—";
+  const secondaryStyle = row.secondary_style || "—";
+  const primaryScore = row.primary_score ?? "—";
+  const secondaryScore = row.secondary_score ?? "—";
+  const primaryText = reportInsight(primaryStyle, primaryScore);
+  const secondaryText = reportInsight(secondaryStyle, secondaryScore);
+  const responseCount = Number(row.completed_respondents || 0);
+  const actions = includeActions ? `<div class="report-actions"><button class="action-btn" onclick="downloadOne('${encodeURIComponent(row.participant_name)}')">Save PDF (A4)</button><button class="action-btn secondary" onclick="printOne('${encodeURIComponent(row.participant_name)}')">Print</button></div>` : "";
+
+  return `<div class="a4-shell" data-participant-report="${encodeURIComponent(row.participant_name)}">
+    <article class="pr-page">
+      <header class="pr-header">
+        <div>
+          <div class="pr-eyebrow">Solutions+ • In-House 360 Feedback</div>
+          <h1>Leadership Feedback Summary</h1>
+        </div>
+        <img class="pr-logo" src="${REPORT_LOGO_SRC}" alt="Solutions+ Academy" />
+      </header>
+      <div class="pr-accent"></div>
+
+      <section class="pr-content">
+        <div class="pr-hero">
+          <div class="pr-person">
+            <div class="pr-name">${esc(row.participant_name)}</div>
+            <div class="pr-meta"><span>${responseCount} response${responseCount===1?"":"s"} consolidated</span></div>
+          </div>
+
+          <div class="pr-cards">
+            <div class="pr-card">
+              <div class="pr-card-label">Primary style</div>
+              <div class="pr-card-style">${esc(primaryStyle)}</div>
+              <div class="pr-card-score">${primaryScore}${primaryScore!=="—"?"%":""}</div>
+            </div>
+            <div class="pr-card">
+              <div class="pr-card-label">Secondary style</div>
+              <div class="pr-card-style">${esc(secondaryStyle)}</div>
+              <div class="pr-card-score">${secondaryScore}${secondaryScore!=="—"?"%":""}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pr-section-title">
+          <h2>Your profile</h2>
+          <p>Consolidated feedback from completed respondents</p>
+        </div>
+
+        <div class="pr-profile"><div class="pr-profile-grid">${scores}</div></div>
+
+        <div class="pr-insights-wrap">
+          <div class="pr-insights-head"><h2>Insights About Your Profile</h2><div class="pr-rule"></div></div>
+          <div class="pr-insights">
+            <article class="pr-insight">
+              <div class="pr-insight-kicker">Primary style</div>
+              <h3>${esc(primaryStyle)}</h3>
+              <div class="pr-mini-score">${primaryScore}${primaryScore!=="—"?"%":""} consolidated score</div>
+              <p>${esc(primaryText)}</p>
+            </article>
+            <article class="pr-insight">
+              <div class="pr-insight-kicker">Secondary style</div>
+              <h3>${esc(secondaryStyle)}</h3>
+              <div class="pr-mini-score">${secondaryScore}${secondaryScore!=="—"?"%":""} consolidated score</div>
+              <p>${esc(secondaryText)}</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <footer class="pr-footer">
+        <span><strong>Solutions+</strong> • Leadership Development</span>
+        <span>Confidential • In-House 360 Feedback</span>
+      </footer>
+    </article>
+    ${actions}
+  </div>`;
+}
+
+function renderReports(){
+  const rows = filteredBySelection(allConsolidated);
+  const stack = document.getElementById("reportStack");
+  const printButton = document.getElementById("printSelectedBtn");
+  const downloadButton = document.getElementById("downloadSelectedBtn");
+  printButton.disabled = rows.length===0;
+  downloadButton.disabled = rows.length===0;
+  if(selectedParticipants.size===0){ stack.innerHTML = '<div class="empty">Choose a participant from the top filter first.</div>'; return; }
+  if(rows.length===0){ stack.innerHTML = '<div class="empty">The selected participant(s) do not yet have completed responses, so no consolidated report is available.</div>'; return; }
+
+  const missing = [...selectedParticipants].filter(name=>!rows.some(r=>r.participant_name===name));
+  const missingNote = missing.length ? `<div class="empty">No report yet for: ${missing.map(esc).join(", ")}. A consolidated report appears after at least one completed response.</div>` : "";
+  stack.innerHTML = rows.map(r=>reportMarkup(r,true)).join("") + missingNote;
+}
+
+function renderRespondentScores(){
+  const container = document.getElementById("respondentCards");
+  const text = document.getElementById("respondentSelectionText");
+  const participant = selectedParticipants.size===1 ? [...selectedParticipants][0] : "";
+
+  if(!participant){
+    text.textContent = activeCohort
+      ? `Select one participant from the top filter to view only their respondent scores. All participants is intentionally not shown here.`
+      : "Choose a cohort, then select one participant.";
+    container.innerHTML = '<div class="empty">Choose one participant from the top Participant filter. Their completed respondent score cards will appear here.</div>';
+    return;
+  }
+
+  const rows = allIndividual.filter(r=>r.cohort===activeCohort && r.participant_name===participant);
+  text.textContent = `${participant} · ${rows.length} completed respondent${rows.length===1?"":"s"}. Individual respondent scoring is Academy-only.`;
+
+  if(rows.length===0){
+    container.innerHTML = `<section class="respondent-group">
+      <div class="respondent-group-head"><div><h3>${esc(participant)}</h3><div class="group-meta">No completed respondent scores yet</div></div></div>
+      <div class="empty">Scores will appear here after a respondent completes the survey.</div>
+    </section>`;
+    return;
+  }
+
+  const cards = rows.map(r=>{
+    const scores = scoreStyles.map(([name,key])=>{
+      const score = Number(r[key] ?? 0);
+      const width = Math.max(0,Math.min(99,score));
+      return `<div class="respondent-style-row">
+        <div class="respondent-style-name">${esc(name)}</div>
+        <div class="respondent-track"><div class="respondent-fill" style="width:${width}%"></div></div>
+        <div class="respondent-score-pct">${score}%</div>
+      </div>`;
+    }).join("");
+
+    return `<article class="respondent-score-card">
+      <div class="respondent-score-inner">
+        <div class="respondent-score-head">
+          <div class="respondent-score-name">${esc(r.respondent_name)}</div>
+          <span class="respondent-relationship">${esc(r.relationship)}</span>
+        </div>
+        <div class="respondent-contact">${esc(r.respondent_email)}${r.submitted_at?` · Submitted ${formatDate(r.submitted_at)}`:""}</div>
+        <div class="respondent-score-title"><strong>8-style scoring</strong><span>Individual response</span></div>
+        <div class="respondent-style-grid">${scores}</div>
+      </div>
+    </article>`;
+  }).join("");
+
+  container.innerHTML = `<section class="respondent-group">
+    <div class="respondent-group-head">
+      <div><h3>${esc(participant)}</h3><div class="group-meta">${rows.length} completed respondent${rows.length===1?"":"s"}</div></div>
+    </div>
+    <div class="respondent-score-grid">${cards}</div>
+  </section>`;
+}
+
+
+async function closeSurvey(encodedCohort, encodedParticipant, completed, total){
+  const cohort = decodeURIComponent(encodedCohort);
+  const participant = decodeURIComponent(encodedParticipant);
+  const pending = total - completed;
+  const detail = pending>0 ? `${completed} of ${total} respondents have completed. Closing now will stop ${pending} remaining Pending link${pending===1?"":"s"}.` : `All ${total} respondents have completed.`;
+  if(!confirm(`Close ${participant}'s survey?\n\n${detail}\n\nThis will mark the campaign Closed.`)) return;
+  clearError();
+  try{
+    await rpc("close_survey_campaign",{p_cohort:cohort,p_participant_name:participant,p_admin_email:currentAdmin});
+    await loadAll();
+  }catch(e){ showError(`Could not close survey: ${e.message}`); }
+}
+
+function pdfPlain(value){
+  return String(value ?? "")
+    .replace(/[\u2018\u2019]/g,"'")
+    .replace(/[\u201C\u201D]/g,'"')
+    .replace(/[\u2013\u2014]/g,'-')
+    .replace(/\u2022/g,'-')
+    .replace(/[^\x20-\x7E]/g,' ')
+    .replace(/\s+/g,' ')
+    .trim();
+}
+
+function pdfEsc(value){
+  return pdfPlain(value).replace(/\\/g,'\\\\').replace(/\(/g,'\\(').replace(/\)/g,'\\)');
+}
+
+function pdfWrap(value,maxChars){
+  const words=pdfPlain(value).split(/\s+/).filter(Boolean);
+  const lines=[];
+  let line='';
+  for(const word of words){
+    const next=line?`${line} ${word}`:word;
+    if(next.length<=maxChars){line=next;}
+    else{
+      if(line) lines.push(line);
+      if(word.length<=maxChars){line=word;}
+      else{
+        let rest=word;
+        while(rest.length>maxChars){lines.push(rest.slice(0,maxChars));rest=rest.slice(maxChars);}
+        line=rest;
+      }
+    }
+  }
+  if(line) lines.push(line);
+  return lines;
+}
+
+function makeParticipantPdf(rows,title){
+  const W=595.28, H=841.89;
+  const lime=[0.902,0.953,0.004];
+  const black=[0.04,0.04,0.04];
+  const dark=[0.10,0.10,0.10];
+  const grey=[0.43,0.43,0.43];
+  const lineGrey=[0.86,0.86,0.83];
+  const soft=[0.975,0.975,0.955];
+  const white=[1,1,1];
+  const stylePairs=scoreStyles;
+
+  const rgb=c=>`${c[0]} ${c[1]} ${c[2]} rg`;
+  const strokeRgb=c=>`${c[0]} ${c[1]} ${c[2]} RG`;
+  const rectTop=(x,yTop,w,h,fill,stroke=null,sw=1)=>{
+    let out=`${rgb(fill)} ${x.toFixed(2)} ${(H-yTop-h).toFixed(2)} ${w.toFixed(2)} ${h.toFixed(2)} re f\n`;
+    if(stroke) out+=`${strokeRgb(stroke)} ${sw} w ${x.toFixed(2)} ${(H-yTop-h).toFixed(2)} ${w.toFixed(2)} ${h.toFixed(2)} re S\n`;
+    return out;
+  };
+  const lineTop=(x1,y1,x2,y2,color,width=1)=>`${strokeRgb(color)} ${width} w ${x1.toFixed(2)} ${(H-y1).toFixed(2)} m ${x2.toFixed(2)} ${(H-y2).toFixed(2)} l S\n`;
+  const textTop=(x,yTop,text,size=10,bold=false,color=black)=>`BT ${rgb(color)} /${bold?'F2':'F1'} ${size} Tf 1 0 0 1 ${x.toFixed(2)} ${(H-yTop-size).toFixed(2)} Tm (${pdfEsc(text)}) Tj ET\n`;
+  const textLines=(x,yTop,lines,size=9,leading=12,bold=false,color=black,maxLines=8)=>{
+    let out='';
+    lines.slice(0,maxLines).forEach((ln,i)=>{out+=textTop(x,yTop+i*leading,ln,size,bold,color);});
+    return out;
+  };
+
+  function pageContent(row){
+    let c='';
+    // Header
+    c+=rectTop(0,0,W,98,black);
+    c+=textTop(37,27,'Solutions+  -  IN-HOUSE 360 FEEDBACK',8,true,lime);
+    c+=textTop(37,49,'Leadership Feedback Summary',21,true,white);
+    c+=textTop(465,34,'SOLUTIONS+',11,true,lime);
+    c+=textTop(476,52,'ACADEMY',7,true,white);
+    c+=rectTop(0,98,W,8,lime);
+
+    const name=pdfPlain(row.participant_name||'Participant');
+    const count=Number(row.completed_respondents||0);
+    c+=textTop(37,126,name,27,true,black);
+    c+=rectTop(440,124,118,23,soft,lineGrey,.8);
+    c+=textTop(455,130,`${count} response${count===1?'':'s'} consolidated`,8,false,grey);
+    c+=lineTop(37,161,558,161,lineGrey,.8);
+
+    const pStyle=pdfPlain(row.primary_style||'-');
+    const sStyle=pdfPlain(row.secondary_style||'-');
+    const pScore=row.primary_score??'-';
+    const sScore=row.secondary_score??'-';
+    const cardY=177, cardW=252, cardH=105;
+    c+=rectTop(37,cardY,cardW,cardH,lime);
+    c+=rectTop(306,cardY,cardW,cardH,lime);
+    c+=textTop(52,192,'PRIMARY STYLE',8,true,black);
+    c+=textTop(321,192,'SECONDARY STYLE',8,true,black);
+    c+=textTop(52,219,pStyle,15,true,black);
+    c+=textTop(321,219,sStyle,15,true,black);
+    c+=textTop(52,247,`${pScore}%`,27,true,black);
+    c+=textTop(321,247,`${sScore}%`,27,true,black);
+
+    c+=textTop(37,310,'Your profile',15,true,black);
+    c+=textTop(373,314,'Consolidated feedback from completed respondents',7,false,grey);
+    c+=rectTop(37,336,521,160,soft,lineGrey,.8);
+
+    const left=stylePairs.slice(0,4), right=stylePairs.slice(4);
+    function styleCol(items,x,y){
+      let out='';
+      items.forEach(([label,key],i)=>{
+        const score=Math.max(0,Math.min(99,Number(row[key]??0)));
+        const yy=y+i*33;
+        out+=textTop(x,yy,label,8.5,true,black);
+        out+=rectTop(x+88,yy+1,112,12,[0.91,0.91,0.88]);
+        out+=rectTop(x+88,yy+1,112*(score/100),12,lime);
+        out+=textTop(x+208,yy,`${score}%`,9,true,black);
+      });
+      return out;
+    }
+    c+=styleCol(left,52,358);
+    c+=styleCol(right,306,358);
+
+    // Insights block
+    c+=rectTop(37,520,521,245,dark);
+    c+=textTop(53,540,'Insights About Your Profile',15,true,white);
+    c+=rectTop(455,545,80,5,lime);
+    c+=rectTop(53,575,238,165,white);
+    c+=rectTop(304,575,238,165,white);
+    c+=rectTop(53,575,6,165,lime);
+    c+=rectTop(304,575,6,165,lime);
+
+    const pText=reportInsight(pStyle,pScore);
+    const sText=reportInsight(sStyle,sScore);
+    c+=textTop(69,592,'PRIMARY STYLE',7,true,grey);
+    c+=textTop(69,612,pStyle,13,true,black);
+    c+=textTop(69,634,`${pScore}% consolidated score`,7.5,true,grey);
+    c+=textLines(69,654,pdfWrap(pText,48),8.2,11,false,black,7);
+
+    c+=textTop(320,592,'SECONDARY STYLE',7,true,grey);
+    c+=textTop(320,612,sStyle,13,true,black);
+    c+=textTop(320,634,`${sScore}% consolidated score`,7.5,true,grey);
+    c+=textLines(320,654,pdfWrap(sText,48),8.2,11,false,black,7);
+
+    c+=lineTop(37,797,558,797,lineGrey,.8);
+    c+=textTop(37,807,'Solutions+  -  Leadership Development',7,true,black);
+    c+=textTop(415,807,'Confidential  -  In-House 360 Feedback',7,false,grey);
+    return c;
+  }
+
+  const contents=rows.map(pageContent);
+  const objects=[];
+  const pageObjNums=[];
+  const contentObjNums=[];
+  // 1 Catalog, 2 Pages, 3 Helvetica, 4 Helvetica-Bold
+  rows.forEach((_,i)=>{pageObjNums.push(5+i*2);contentObjNums.push(6+i*2);});
+  objects[1]='<< /Type /Catalog /Pages 2 0 R >>';
+  objects[2]=`<< /Type /Pages /Count ${rows.length} /Kids [${pageObjNums.map(n=>`${n} 0 R`).join(' ')}] >>`;
+  objects[3]='<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>';
+  objects[4]='<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>';
+  rows.forEach((_,i)=>{
+    objects[pageObjNums[i]]=`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${W} ${H}] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents ${contentObjNums[i]} 0 R >>`;
+    const stream=contents[i];
+    objects[contentObjNums[i]]=`<< /Length ${stream.length} >>\nstream\n${stream}endstream`;
+  });
+
+  let pdf='%PDF-1.4\n%NativePDF\n';
+  const offsets=[0];
+  for(let i=1;i<objects.length;i++){
+    offsets[i]=pdf.length;
+    pdf+=`${i} 0 obj\n${objects[i]}\nendobj\n`;
+  }
+  const xref=pdf.length;
+  pdf+=`xref\n0 ${objects.length}\n0000000000 65535 f \n`;
+  for(let i=1;i<objects.length;i++) pdf+=`${String(offsets[i]).padStart(10,'0')} 00000 n \n`;
+  pdf+=`trailer\n<< /Size ${objects.length} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`;
+
+  const blob=new Blob([pdf],{type:'application/pdf'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download=`${pdfPlain(title||'Solutions+ 360 Feedback').replace(/[^A-Za-z0-9 _-]/g,'').trim() || 'Solutions+ 360 Feedback'}.pdf`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1500);
+}
+
+function downloadOne(encodedParticipant){
+  const participant = decodeURIComponent(encodedParticipant);
+  const row = allConsolidated.find(r=>r.cohort===activeCohort && r.participant_name===participant);
+  if(!row){ alert("This participant does not yet have a consolidated report."); return; }
+  makeParticipantPdf([row],`${participant} - Solutions+ 360 Feedback`);
+}
+
+function downloadSelected(){
+  const rows = filteredBySelection(allConsolidated);
+  if(rows.length===0){ alert("Select at least one participant with a consolidated result."); return; }
+  makeParticipantPdf(rows,`${activeCohort || "Selected"} - Solutions+ 360 Feedback Reports`);
+}
+
+function printOne(encodedParticipant){
+  const participant = decodeURIComponent(encodedParticipant);
+  const row = allConsolidated.find(r=>r.cohort===activeCohort && r.participant_name===participant);
+  if(!row){ alert("This participant does not yet have a consolidated report."); return; }
+  printRows([row],`${participant} - Leadership Profile`);
+}
+
+function printSelected(){
+  const rows = filteredBySelection(allConsolidated);
+  if(rows.length===0){ alert("Select at least one participant with a consolidated result."); return; }
+  printRows(rows,`${activeCohort} - Participant Leadership Profiles`);
+}
+
+function printRows(rows,title){
+  const w = window.open("","_blank","width=1000,height=800");
+  if(!w){ alert("Please allow pop-ups for this page so the PDF window can open."); return; }
+  const reports = rows.map(r=>reportMarkup(r,false).replace('class="a4-shell"','class="print-page"')).join("");
+  w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${esc(title)}</title><style>
+    @page{size:A4;margin:0}*{box-sizing:border-box}html,body{margin:0;background:#fff;font-family:Arial,Helvetica,sans-serif;color:#0a0a0a}.print-page{width:210mm;height:297mm;page-break-after:always;overflow:hidden}.print-page:last-child{page-break-after:auto}
+    .pr-page{width:210mm;height:297mm;background:#fff;color:#0a0a0a;position:relative;overflow:hidden}.pr-header{height:34mm;background:#0a0a0a;padding:8mm 13mm 6.5mm;display:flex;align-items:center;justify-content:space-between}.pr-eyebrow{font-size:8.2pt;color:#e6f301;font-weight:900;letter-spacing:1.65px;text-transform:uppercase;margin-bottom:3.5mm}.pr-header h1{margin:0;color:#fff;font-size:22pt;line-height:1;letter-spacing:-.7px;max-width:118mm;font-weight:800}.pr-logo{width:45mm;height:auto;display:block}.pr-accent{height:2.6mm;background:#e6f301}.pr-content{padding:10mm 13mm 9mm}.pr-hero{display:block;margin-bottom:7mm}.pr-person{display:flex;align-items:flex-end;justify-content:space-between;padding-bottom:4.5mm;border-bottom:1px solid #d8d8d2;margin-bottom:5mm}.pr-name{font-size:32pt;font-weight:900;line-height:.95;letter-spacing:-1.25px;margin:0}.pr-meta{font-size:8.6pt;color:#555;display:flex;gap:3mm;flex-wrap:wrap;align-items:center}.pr-meta span{background:#f4f4f0;padding:2.2mm 3.5mm;border-radius:99px;border:1px solid #ecece6}.pr-cards{display:grid;grid-template-columns:1fr 1fr;gap:4mm;width:100%}.pr-card{width:100%;height:40mm;border-radius:2.6mm;padding:5.5mm 6mm;background:#e6f301;color:#0a0a0a;display:grid;grid-template-rows:auto 1fr auto;align-items:start;overflow:hidden;border:1px solid #d3de00}.pr-card-label{font-size:7.6pt;line-height:1;text-transform:uppercase;letter-spacing:1.35px;font-weight:900;opacity:.72;margin:0}.pr-card-style{font-size:15.5pt;font-weight:900;line-height:1.05;align-self:center;overflow-wrap:anywhere}.pr-card-score{font-size:30pt;font-weight:900;line-height:.85;letter-spacing:-1px}.pr-section-title{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:3.5mm}.pr-section-title h2{margin:0;font-size:15.5pt;letter-spacing:-.35px;font-weight:900}.pr-section-title p{margin:0;font-size:8pt;color:#7a7a7a}.pr-profile{background:#fafaf7;border:1px solid #d8d8d2;border-radius:3mm;padding:5mm 5mm 4.5mm;margin-bottom:7mm}.pr-profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:2.3mm 8mm}.pr-style-row{display:grid;grid-template-columns:32mm 1fr 13mm;gap:3mm;align-items:center;min-height:9.5mm}.pr-style-name{font-size:9pt;font-weight:800;white-space:nowrap}.pr-track{height:5.4mm;background:#e7e7e1;border-radius:99px;overflow:hidden}.pr-fill{height:100%;background:#e6f301;border-radius:99px}.pr-pct{font-size:9.5pt;font-weight:900;text-align:right}.pr-insights-wrap{background:#0a0a0a;border-radius:3mm;padding:5mm;margin-top:1mm}.pr-insights-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:4mm}.pr-insights-head h2{margin:0;color:#fff;font-size:15.5pt;font-weight:900;letter-spacing:-.3px}.pr-rule{width:30mm;height:2.5mm;background:#e6f301;border-radius:99px}.pr-insights{display:grid;grid-template-columns:1fr 1fr;gap:4mm}.pr-insight{background:#fff;border-radius:2.5mm;padding:4.7mm 5mm;min-height:53mm;position:relative;overflow:hidden}.pr-insight:before{content:"";position:absolute;left:0;top:0;bottom:0;width:2.2mm;background:#e6f301}.pr-insight-kicker{font-size:7.2pt;text-transform:uppercase;letter-spacing:1.2px;font-weight:900;color:#7a7a7a;margin-left:1mm;margin-bottom:1.8mm}.pr-insight h3{font-size:14.5pt;margin:0 0 2mm 1mm;font-weight:900}.pr-mini-score{font-size:8.1pt;font-weight:800;margin-left:1mm;margin-bottom:2.6mm;color:#555}.pr-insight p{font-size:9pt;line-height:1.46;margin:0 0 0 1mm;color:#292929}.pr-footer{position:absolute;left:13mm;right:13mm;bottom:7mm;display:flex;justify-content:space-between;align-items:center;border-top:1px solid #dedede;padding-top:3mm;font-size:7.2pt;color:#777}.pr-footer strong{color:#0a0a0a}.report-actions{display:none}
+  </style></head><body>${reports}<script>window.onload=()=>{setTimeout(()=>window.print(),500)}<\/script></body></html>`);
+  w.document.close();
+}
+
+function switchTab(name){
+  document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b.dataset.tab===name));
+  document.querySelectorAll(".tab-panel").forEach(p=>p.classList.add("hidden"));
+  document.getElementById(`tab-${name}`).classList.remove("hidden");
+}
+
+document.getElementById("enterBtn").addEventListener("click",validateAdmin);
+document.getElementById("adminEmail").addEventListener("keydown",e=>{if(e.key==="Enter") validateAdmin();});
+document.getElementById("refreshBtn").addEventListener("click",loadAll);
+document.getElementById("cohortSelect").addEventListener("change",e=>{
+  activeCohort = e.target.value;
+  selectedParticipants = new Set(cohortParticipants());
+  lastSelectionCohort = activeCohort;
+  buildParticipantFilter();
+  renderAll();
+});
+document.getElementById("participantSelect").addEventListener("change",e=>{
+  const value = e.target.value;
+  if(value === "__all__") selectedParticipants = new Set(cohortParticipants());
+  else if(value) selectedParticipants = new Set([value]);
+  else selectedParticipants = new Set();
+  renderAll();
+});
+document.getElementById("downloadSelectedBtn").addEventListener("click",downloadSelected);
+document.getElementById("printSelectedBtn").addEventListener("click",printSelected);
+document.getElementById("signOutBtn").addEventListener("click",()=>{sessionStorage.removeItem("mini_lsi_admin");location.reload();});
+document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click",()=>switchTab(b.dataset.tab)));
+
+(async function init(){
+  const saved = sessionStorage.getItem("mini_lsi_admin");
+  if(saved){document.getElementById("adminEmail").value=saved;await validateAdmin();}
+})();
+</script>
+</body>
+</html>
